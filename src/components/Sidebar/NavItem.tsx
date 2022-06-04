@@ -1,18 +1,21 @@
-import { FaElementor, FaHotjar, FaLyft } from "react-icons/fa";
-
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { ReactNode } from "react";
 
 interface Props {
   name: string;
   page: string;
+  children: ReactNode;
 }
 
-export function NavItem({ name, page }: Props) {
+export function NavItem({ name, page, children }: Props) {
+  const router = useRouter();
+
   return (
     <Link href={page}>
-      <a className="flex items-center gap-4">
-        <FaElementor size={18} />
-        <span className="text-sm text-slate-200">{name}</span>
+      <a className={`h-16 flex items-center gap-4 px-4 hover:bg-sky-500 transition-colors ${router.asPath === page && "bg-sky-500"}`}>
+        { children }
+        <span className="text-sm">{name}</span>
       </a>
     </Link>
   );

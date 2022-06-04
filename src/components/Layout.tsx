@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import { Fragment, ReactNode, useState } from "react";
+import { User } from "../types";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 
@@ -28,7 +29,7 @@ export function Layout({ title, children }: Props) {
         <section className={`transition-all duration-300 ${sidebarIsOpen ? "pl-[350px]" : "pl-0"}`}>
           <Header onToggleSidebar={onToggleSidebar} />
 
-          <div className="h-[calc(100vh-4rem)] overflow-y-auto p-4">
+          <div className="h-[calc(100vh-4rem)] overflow-y-auto p-4 flex flex-col gap-6">
             {children}
           </div>
         </section>
