@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { api } from "../../lib/api";
 import { AxiosRequestConfig } from "axios";
+import { toast } from "react-toastify";
 
 import filesize from "filesize";
 import Link from "next/link";
@@ -96,9 +97,14 @@ export default function Create() {
         created_at: new Date().toISOString(),
       });
 
-      Router.push("/technologies");
+      setValue("name", "");
+      setValue("imageLocal", "");
+      setValue("imageUrl", "");
+      onDeleteImage();
+
+      toast.success("Tecnologia adicionada");
     } catch (error) {
-      console.error("Error adding document: ", error);
+      toast.error("Houve um erro");
     }
   };
 

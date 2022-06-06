@@ -1,12 +1,16 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react"
 import { Layout } from "../../components/Layout";
-import { Row } from "../../components/Row";
+import { PageHeader } from "../../components/PageHeader";
 
 export default function Projects() {
   return (
     <Layout title="Projetos">
-      <Row />
+      <PageHeader 
+        title="Projetos"
+        amount={2}
+        destination="/projects"
+      />
     </Layout>
   );
 }
