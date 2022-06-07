@@ -1,7 +1,6 @@
 import Head from "next/head";
 
 import { Fragment, ReactNode, useState } from "react";
-import { User } from "../types";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { ToastContainer } from "react-toastify";

@@ -5,6 +5,7 @@ import { AxiosRequestConfig } from "axios";
 import { api } from "../../lib/api";
 import { FieldError } from "react-hook-form";
 import { ImageLocal } from "../../types";
+import { BiTrashAlt } from "react-icons/bi";
 
 import fileSize from "filesize";
 
@@ -15,6 +16,7 @@ interface Props {
   imageLocal: ImageLocal | null;
   setImageUrl: Dispatch<SetStateAction<string>>;
   imageUrl: string;
+  mode: "create" | "update";
 }
 
 export function FileInput({
@@ -23,7 +25,8 @@ export function FileInput({
   setImageLocal,
   imageLocal,
   setImageUrl,
-  imageUrl
+  imageUrl,
+  mode,
 }: Props) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
@@ -48,7 +51,7 @@ export function FileInput({
       const respose = await api.post("https://api.imgbb.com/1/upload", formData, config);
       setImageUrl(respose.data.data.url);
     } catch (error) {
-      setImageUrl(""); // erro
+      setImageUrl("");
     } finally {
       setIsUploadingImage(false);
     }
@@ -73,6 +76,23 @@ export function FileInput({
   function onDeleteImage() {
     setImageLocal(null);
     setImageUrl("");
+  }
+
+  if (mode === "update" && imageUrl && !imageLocal) {
+    return (
+      <div className="flex gap-2 items-center">
+        <img
+          className="w-14 h-14 object-cover rounded"
+          src={imageUrl}
+          alt="Imagem carregada"
+        />
+
+        <button onClick={onDeleteImage} className="flex items-center gap-1 text-red-400 text-sm hover:text-red-300 transition-colors duration-200">
+          <BiTrashAlt size={18} />
+          <span>Excluir</span>
+        </button>
+      </div>
+    );
   }
 
   return (

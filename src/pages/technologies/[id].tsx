@@ -1,27 +1,22 @@
-import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react"
+import { format } from "date-fns";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { GetServerSideProps } from "next"
+import { getSession } from "next-auth/react";
+import { BackButton } from "../../components/BackButton";
+import { TechnologyForm } from "../../components/Form/TechnologyForm";
 import { Layout } from "../../components/Layout";
-import { PageHeader } from "../../components/PageHeader";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { database } from "../../lib/firebase";
 import { Technology } from "../../types";
-import { Table } from "../../components/Table";
-import { format } from "date-fns";
 
 interface Props {
-  technologies: Array<Technology>;
+  technology: Technology;
 }
 
-export default function Technologies({ technologies }: Props) {
+export default function Update({ technology }: Props) {
   return (
     <Layout title="Tecnologias">
-      <PageHeader
-        title="Tecnologias"
-        amount={technologies.length}
-        destination="/technologies/create"
-      />
-
-      {technologies.length > 0 && <Table data={technologies} />}
+      <BackButton destination="/technologies" />
+      <TechnologyForm technology={technology} /> { /* Update */}
     </Layout>
   );
 }
@@ -41,7 +36,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const q = query(
     collection(database, "technologies"),
     where("email", "==", "luizoliveira2808@gmail.com"),
-    orderBy("created_at", "desc")
   );
 
   const querySnapshot = await getDocs(q);
@@ -56,9 +50,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
   });
 
+  const technology = technologies.find(technology => technology.id === context.params?.id);
+
+  if (!technology) {
+    return {
+      redirect: {
+        destination: "/technologies",
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {
-      technologies,
+      technology,
     },
   }
 }

@@ -1,5 +1,4 @@
 import { NavItem } from "./NavItem";
-
 import { BiHomeAlt, BiBriefcaseAlt2, BiBookAlt } from "react-icons/bi";
 
 export function Nav() {
