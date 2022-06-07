@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react"
-import { AppProvider } from "../contexts/AppContext";
+import { TechnologiesProvider } from "../contexts/TechnologiesContext";
 
 export default function App({
   Component,
@@ -11,9 +11,9 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-      <AppProvider>
+      <TechnologiesProvider>
         <Component {...pageProps} />
-      </AppProvider>
+      </TechnologiesProvider>
     </SessionProvider>
   )
 }

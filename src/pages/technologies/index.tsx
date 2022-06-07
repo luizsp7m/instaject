@@ -9,22 +9,29 @@ import { Table } from "../../components/Table";
 import { format } from "date-fns";
 import { useApp } from "../../hooks/useApp";
 import { doc, deleteDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
-interface Props {
-  technologies: Array<Technology>;
-}
 
-export default function Technologies({ technologies }: Props) {
-  const { technologyList } = useApp();
+export default function Technologies() {
+  const {
+    technologyList,
+    setTechnologyList,
+    technologies,
+  } = useApp();
 
   async function removeTechnology(technologyId: string) {
     await deleteDoc(doc(database, "technologies", technologyId));
   }
-  
+
   async function removeTechnologies() {
-    Promise.all(technologyList.map(technology => removeTechnology(technology.id))).then(response => {
-      console.log(response);
-    })
+    Promise.all(technologyList.map(technology => removeTechnology(technology.id)))
+      .then(() => {
+        setTechnologyList([]);
+        toast.success("Deleted(s)");
+      })
+      .catch(error => {
+        toast.success("Error");
+      });
   }
 
   return (
@@ -61,27 +68,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  const q = query(
-    collection(database, "technologies"),
-    where("email", "==", "luizoliveira2808@gmail.com"),
-    orderBy("created_at", "desc")
-  );
-
-  const querySnapshot = await getDocs(q);
-  const technologies: Array<Technology> = [];
-  querySnapshot.forEach(doc => {
-    technologies.push({
-      id: doc.id,
-      email: doc.data().email,
-      name: doc.data().name,
-      imageUrl: doc.data().imageUrl,
-      created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
-    });
-  });
-
   return {
     props: {
-      technologies,
     },
   }
 }

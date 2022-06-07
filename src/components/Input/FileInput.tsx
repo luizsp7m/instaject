@@ -5,7 +5,7 @@ import { AxiosRequestConfig } from "axios";
 import { api } from "../../lib/api";
 import { FieldError } from "react-hook-form";
 import { ImageLocal } from "../../types";
-import { BiTrashAlt } from "react-icons/bi";
+import { BiRefresh } from "react-icons/bi";
 
 import fileSize from "filesize";
 
@@ -87,9 +87,9 @@ export function FileInput({
           alt="Imagem carregada"
         />
 
-        <button onClick={onDeleteImage} className="flex items-center gap-1 text-red-400 text-sm hover:text-red-300 transition-colors duration-200">
-          <BiTrashAlt size={18} />
-          <span>Excluir</span>
+        <button onClick={onDeleteImage} className="flex items-center gap-1 text-slate-400 text-sm hover:text-slate-300 transition-colors duration-200">
+          <BiRefresh size={18} />
+          <span>Substituir</span>
         </button>
       </div>
     );
