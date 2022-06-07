@@ -11,3 +11,9 @@ export type Technology = {
   imageUrl: string;
   created_at: string;
 }
+
+export type ImageLocal = {
+  image: string;
+  name: string;
+  size: string;
+}
