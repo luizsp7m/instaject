@@ -7,7 +7,7 @@ import { database } from "../../lib/firebase";
 import { Technology } from "../../types";
 import { Table } from "../../components/Table";
 import { format } from "date-fns";
-import { useApp } from "../../hooks/useApp";
+import { useTechnologies } from "../../hooks/useTechnologies";
 import { doc, deleteDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 
@@ -17,7 +17,7 @@ export default function Technologies() {
     technologyList,
     setTechnologyList,
     technologies,
-  } = useApp();
+  } = useTechnologies();
 
   async function removeTechnology(technologyId: string) {
     await deleteDoc(doc(database, "technologies", technologyId));

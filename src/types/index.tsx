@@ -12,6 +12,17 @@ export type Technology = {
   created_at: string;
 }
 
+export type Project = {
+  id: string;
+  email: string;
+  name: string;
+  description: string;
+  repository: string;
+  deploy: string;
+  imageUrl: string;
+  created_at: string;
+}
+
 export type ImageLocal = {
   image: string;
   name: string;

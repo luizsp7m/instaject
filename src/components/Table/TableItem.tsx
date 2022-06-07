@@ -1,15 +1,14 @@
-import { Technology } from "../../types";
-
 import Link from "next/link";
-import { useApp } from "../../hooks/useApp";
-import { useState } from "react";
+
+import { Technology } from "../../types";
+import { useTechnologies } from "../../hooks/useTechnologies";
 
 interface Props {
   data: Technology;
 }
 
 export function TableItem({ data }: Props) {
-  const { addTechnologyToList } = useApp();
+  const { addTechnologyToList } = useTechnologies();
 
   return (
 

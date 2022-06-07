@@ -1,20 +1,14 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react"
 import { Layout } from "../../components/Layout";
-import { PageHeader } from "../../components/PageHeader";
-import { Table } from "../../components/Table";
-import { useProjects } from "../../hooks/useProjects";
+import { BackButton } from "../../components/BackButton";
+import { ProjectForm } from "../../components/Form/ProjectForm";
 
-export default function Projects() {
-  const { projects } = useProjects();
-
+export default function Create() {
   return (
-    <Layout title="Projetos">
-      <PageHeader
-        title="Projetos"
-        amount={projects.length}
-        destination="/projects/create"
-      />
+    <Layout title="Adicionar projeto">
+      <BackButton destination="/projects" />
+      <ProjectForm />
     </Layout>
   );
 }

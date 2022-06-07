@@ -6,10 +6,10 @@ interface Props {
   destination: string;
 }
 
-export function BackButton({ }: Props) {
+export function BackButton({ destination }: Props) {
   return (
     <div className="flex">
-      <Link href={"/technologies"} passHref>
+      <Link href={destination} passHref>
         <a href="" className="flex items-center gap-2 text-sm text-gray-400 hover:underline">
           <BiArrowBack />
           <span>Voltar</span>
