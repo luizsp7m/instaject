@@ -7,12 +7,26 @@ import { database } from "../../lib/firebase";
 import { Technology } from "../../types";
 import { Table } from "../../components/Table";
 import { format } from "date-fns";
+import { useApp } from "../../hooks/useApp";
+import { doc, deleteDoc } from "firebase/firestore";
 
 interface Props {
   technologies: Array<Technology>;
 }
 
 export default function Technologies({ technologies }: Props) {
+  const { technologyList } = useApp();
+
+  async function removeTechnology(technologyId: string) {
+    await deleteDoc(doc(database, "technologies", technologyId));
+  }
+  
+  async function removeTechnologies() {
+    Promise.all(technologyList.map(technology => removeTechnology(technology.id))).then(response => {
+      console.log(response);
+    })
+  }
+
   return (
     <Layout title="Tecnologias">
       <PageHeader
@@ -22,6 +36,15 @@ export default function Technologies({ technologies }: Props) {
       />
 
       {technologies.length > 0 && <Table data={technologies} />}
+
+      {!!technologyList.length && (
+        <div className="absolute left-0 right-0 bottom-8 flex justify-center text-sm">
+          <div className="bg-red-400 p-4 rounded flex gap-2">
+            <p>{technologyList.length} registro(s) selecionado(s)</p>
+            <button onClick={removeTechnologies} className="underline font-medium">Excluir</button>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
