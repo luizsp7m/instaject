@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { collection, getDocs, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
@@ -8,8 +8,8 @@ import { Technology } from "../types";
 
 interface TechnologiesContextData {
   addTechnologyToList: (technology: Technology) => void;
-  setTechnologyList: Dispatch<SetStateAction<Technology[]>>
-  technologyList: Array<Technology>;
+  setRemoveList: Dispatch<SetStateAction<Technology[]>>
+  removeList: Array<Technology>;
   technologies: Array<Technology>;
 }
 
@@ -23,12 +23,12 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
   const { data: session } = useSession();
 
   const [technologies, setTechnologies] = useState<Technology[]>([]); // Lista do banco de dados
-  const [technologyList, setTechnologyList] = useState<Technology[]>([]); // Lista de selecionadas pelo usuário
+  const [removeList, setRemoveList] = useState<Technology[]>([]); // Lista de selecionadas pelo usuário
 
   const Router = useRouter();
 
   function addTechnologyToList(technology: Technology) {
-    const updateTechnologyList = [...technologyList];
+    const updateTechnologyList = [...removeList];
     const exists = updateTechnologyList.find(item => item.id === technology.id);
 
     if (!exists) {
@@ -38,7 +38,7 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
       updateTechnologyList.splice(technologyIndex, 1);
     }
 
-    setTechnologyList(updateTechnologyList);
+    setRemoveList(updateTechnologyList);
   }
 
   async function getTechnologies() {
@@ -68,7 +68,7 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
 
   useEffect(() => {
     if (Router.asPath !== "/technologies") {
-      setTechnologyList([]);
+      setRemoveList([]);
     }
   }, [Router]);
 
@@ -80,10 +80,10 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
 
   return (
     <TechnologiesContext.Provider value={{
-      addTechnologyToList,
-      setTechnologyList,
-      technologyList,
+      removeList,
       technologies,
+      addTechnologyToList,
+      setRemoveList,
     }}>
       {children}
     </TechnologiesContext.Provider>

@@ -1,11 +1,15 @@
 import { format } from "date-fns";
-import { collection, getDocs, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { database } from "../lib/firebase";
 import { Project } from "../types";
 
 interface ProjectsContextData {
+  addProjectToList: (project: Project) => void;
+  setRemoveList: Dispatch<SetStateAction<Project[]>>;
+  removeList: Array<Project>;
   projects: Array<Project>;
 }
 
@@ -18,7 +22,24 @@ export const ProjectsContext = createContext({} as ProjectsContextData);
 export function ProjectsProvider({ children }: ProjectsProviderProps) {
   const { data: session } = useSession();
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]); // Lista do banco de dados
+  const [removeList, setRemoveList] = useState<Project[]>([]); // Lista de selecionadas pelo usuário
+
+  const Router = useRouter();
+
+  function addProjectToList(project: Project) {
+    const updateProjectList = [...removeList];
+    const exists = updateProjectList.find(item => item.id === project.id);
+
+    if (!exists) {
+      updateProjectList.push(project);
+    } else {
+      const projectIndex = updateProjectList.findIndex(item => item.id === project.id);
+      updateProjectList.splice(projectIndex, 1);
+    }
+
+    setRemoveList(updateProjectList);
+  }
 
   async function getProjects() {
     const q = query(
@@ -49,6 +70,12 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   }
 
   useEffect(() => {
+    if (Router.asPath !== "/technologies") {
+      setRemoveList([]);
+    }
+  }, [Router]);
+
+  useEffect(() => {
     if (session) {
       getProjects();
     }
@@ -57,6 +84,9 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   return (
     <ProjectsContext.Provider value={{
       projects,
+      removeList,
+      setRemoveList,
+      addProjectToList,
     }}>
       {children}
     </ProjectsContext.Provider>
