@@ -60,6 +60,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
           deploy: doc.data().deploy,
           description: doc.data().description,
           repository: doc.data().repository,
+          technologies: doc.data().technologies,
         });
       });
 

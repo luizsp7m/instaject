@@ -1,13 +1,19 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useTechnologies } from "../../hooks/useTechnologies";
 import { database } from "../../lib/firebase";
-import { ImageLocal } from "../../types";
+import { ImageLocal, Project, Technology } from "../../types";
 import { FileInput } from "../Input/FileInput";
+import { TechnologiesInput } from "../Input/TechnologiesInput";
 import { TextInput } from "../Input/TextInput";
 import { Loading } from "../Loading";
+
+interface Props {
+  project?: Project;
+}
 
 type Inputs = {
   name: string;
@@ -20,25 +26,41 @@ type Inputs = {
   }>;
 }
 
-export function ProjectForm() {
+export function ProjectForm({ project }: Props) {
+  const { technologies } = useTechnologies();
   const { data: session } = useSession();
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Inputs>();
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Inputs>({
+    defaultValues: {
+      name: project ? project.name : "",
+      description: project ? project.description : "",
+      repository: project ? project.repository : "",
+      deploy: project ? project.deploy : "",
+      imageUrl: project ? project.imageUrl : "",
+      technologies: project ? project.technologies : [],
+    }
+  });
 
   const [imageLocal, setImageLocal] = useState<ImageLocal | null>(null);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(project ? project.imageUrl : "");
+  const [chosenList, setChosenList] = useState<Technology[]>([]);
+
+  const mode = !project ? "create" : "update";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    return createProject(data);
+    return mode === "create" ?
+      createProject(data) :
+      updateProject(data, project?.id + "");
   }
 
   async function createProject(data: Inputs) {
     try {
-      const { 
-        name, 
+      const {
+        name,
         description,
         repository,
         deploy,
         imageUrl,
+        technologies,
       } = data;
 
       const docRef = await addDoc(collection(database, "projects"), {
@@ -47,6 +69,7 @@ export function ProjectForm() {
         repository,
         deploy,
         imageUrl,
+        technologies,
         email: session?.user?.email,
         created_at: new Date().toISOString(),
       });
@@ -56,15 +79,45 @@ export function ProjectForm() {
       setValue("repository", "");
       setValue("deploy", "");
       setValue("imageUrl", "");
+      setValue("technologies", []);
 
       setImageLocal(null);
       setImageUrl("");
+      setChosenList([]);
 
       toast.success("Created");
     } catch (error) {
       toast.error("Error");
     }
   };
+
+  async function updateProject(data: Inputs, projectId: string) {
+    try {
+      const {
+        name,
+        description,
+        repository,
+        deploy,
+        imageUrl,
+        technologies,
+      } = data;
+
+      const docRef = await updateDoc(doc(database, "projects", projectId), {
+        name,
+        description,
+        repository,
+        deploy,
+        imageUrl,
+        technologies,
+        created_at: new Date().toISOString(),
+      })
+
+      toast.success("Updated");
+
+    } catch (error) {
+      toast.error("Error");
+    }
+  }
 
   useEffect(() => {
     if (imageUrl) {
@@ -75,8 +128,30 @@ export function ProjectForm() {
   }, [imageUrl]);
 
   useEffect(() => {
+    if (chosenList.length > 0) {
+      const technologiesId = chosenList.map(item => {
+        return {
+          technologyId: item.id
+        }
+      });
 
-  }, []);
+      setValue("technologies",
+        technologiesId,
+        { shouldValidate: true });
+    } else {
+      setValue("technologies", []);
+    }
+  }, [chosenList]);
+
+  useEffect(() => {
+    if (!!technologies.length && project) {
+      const chosenList = project.technologies.map(({ technologyId }) => {
+        return technologies.find(item => item.id === technologyId);
+      });
+
+      setChosenList(chosenList as Array<Technology>);
+    }
+  }, [technologies]);
 
   return (
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
@@ -115,6 +190,20 @@ export function ProjectForm() {
           })}
         />
 
+        <TechnologiesInput
+          chosenList={chosenList}
+          setChosenList={setChosenList}
+          error={errors.technologies}
+        />
+
+        <input
+          type="hidden"
+          disabled
+          {...register("technologies", {
+            required: true,
+          })}
+        />
+
         <FileInput
           title="Imagem"
           error={errors.imageUrl}
@@ -122,7 +211,7 @@ export function ProjectForm() {
           imageLocal={imageLocal}
           setImageUrl={setImageUrl}
           imageUrl={imageUrl}
-          mode={"create"}
+          mode={mode}
         />
 
         <input

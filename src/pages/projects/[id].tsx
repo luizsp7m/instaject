@@ -3,20 +3,20 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next"
 import { getSession } from "next-auth/react";
 import { BackButton } from "../../components/BackButton";
-import { TechnologyForm } from "../../components/Form/TechnologyForm";
+import { ProjectForm } from "../../components/Form/ProjectForm";
 import { Layout } from "../../components/Layout";
 import { database } from "../../lib/firebase";
-import { Technology } from "../../types";
+import { Project } from "../../types";
 
 interface Props {
-  technology: Technology;
+  project: Project;
 }
 
-export default function Update({ technology }: Props) {
+export default function Update({ project }: Props) {
   return (
-    <Layout title="Tecnologias">
-      <BackButton destination="/technologies" />
-      <TechnologyForm technology={technology} /> { /* Update */}
+    <Layout title="Projetos">
+      <BackButton destination="/projects" />
+      <ProjectForm project={project} />
     </Layout>
   );
 }
@@ -34,28 +34,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const q = query(
-    collection(database, "technologies"),
+    collection(database, "projects"),
     where("email", "==", session.user?.email),
   );
 
   const querySnapshot = await getDocs(q);
-  const technologies: Array<Technology> = [];
+  const projects: Array<Project> = [];
   querySnapshot.forEach(doc => {
-    technologies.push({
+    projects.push({
       id: doc.id,
       email: doc.data().email,
       name: doc.data().name,
       imageUrl: doc.data().imageUrl,
       created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
+      deploy: doc.data().deploy,
+      description: doc.data().description,
+      repository: doc.data().repository,
+      technologies: doc.data().technologies,
     });
   });
 
-  const technology = technologies.find(technology => technology.id === context.params?.id);
+  const project = projects.find(project => project.id === context.params?.id);
 
-  if (!technology) {
+  if (!project) {
     return {
       redirect: {
-        destination: "/technologies",
+        destination: "/projects",
         permanent: false,
       },
     }
@@ -63,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      technology,
+      project,
     },
   }
 }

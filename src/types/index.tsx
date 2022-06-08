@@ -21,6 +21,9 @@ export type Project = {
   deploy: string;
   imageUrl: string;
   created_at: string;
+  technologies: Array<{
+    technologyId: string;
+  }>;
 }
 
 export type ImageLocal = {

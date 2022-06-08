@@ -40,7 +40,10 @@ export function TechnologyForm({ technology }: Props) {
 
   async function createTechnology(data: Inputs) {
     try {
-      const { name, imageUrl } = data;
+      const {
+        name,
+        imageUrl
+      } = data;
 
       const docRef = await addDoc(collection(database, "technologies"), {
         name,
