@@ -8,84 +8,63 @@ import { FileInput } from "../Input/FileInput";
 import { TextInput } from "../Input/TextInput";
 import { Loading } from "../Loading";
 import { toast } from "react-toastify";
+import { useTechnologies } from "../../hooks/useTechnologies";
 
 interface Props {
   technology?: Technology;
 }
 
-type Inputs = {
+export type TechnologyInputs = {
   name: string;
-  imageUrl: string;
+  image: string;
 };
 
 export function TechnologyForm({ technology }: Props) {
-  const { data: session } = useSession();
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Inputs>({
+  const { createTechnology, updateTechnology } = useTechnologies();
+
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<TechnologyInputs>({
     defaultValues: {
       name: technology ? technology.name : "",
-      imageUrl: technology ? technology.imageUrl : "",
+      image: technology ? technology.image : "",
     }
   });
 
   const [imageLocal, setImageLocal] = useState<ImageLocal | null>(null);
-  const [imageUrl, setImageUrl] = useState(technology ? technology.imageUrl : "");
+  const [imageUrl, setImageUrl] = useState(technology ? technology.image : "");
 
   const mode = !technology ? "create" : "update";
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<TechnologyInputs> = async (data) => {
     return mode === "create" ?
-      createTechnology(data) :
-      updateTechnology(data, technology?.id + "");
+      onCreateTechnology(data) :
+      onUpdateTechnology(data, technology?.id + "");
   }
 
-  async function createTechnology(data: Inputs) {
-    try {
-      const {
-        name,
-        imageUrl
-      } = data;
-
-      const docRef = await addDoc(collection(database, "technologies"), {
-        name,
-        imageUrl,
-        email: session?.user?.email,
-        created_at: new Date().toISOString(),
-      });
-
+  function onCreateTechnology(data: TechnologyInputs) {
+    createTechnology(data).then(() => {
       setValue("name", "");
-      setValue("imageUrl", "");
-
+      setValue("image", "");
       setImageLocal(null);
       setImageUrl("");
-
-      toast.success("Created");
-    } catch (error) {
-      toast.error("Error");
-    }
+      toast.success("Tecnologia adicionada");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
   };
 
-  async function updateTechnology(data: Inputs, id: string) {
-    try {
-      const { name, imageUrl } = data;
-
-      const docRef = await updateDoc(doc(database, "technologies", id), {
-        name,
-        imageUrl,
-        created_at: new Date().toISOString(),
-      })
-
-      toast.success("Updated");
-
-    } catch (error) {
-      toast.error("Error");
-    }
+  async function onUpdateTechnology(data: TechnologyInputs, technologyId: string) {
+    updateTechnology(data, technologyId).then(() => {
+      toast.success("Dados salvos");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
   }
 
   useEffect(() => {
     if (imageUrl) {
-      setValue("imageUrl", imageUrl, { shouldValidate: true });
+      setValue("image", imageUrl, { shouldValidate: true });
     } else {
-      setValue("imageUrl", imageUrl);
+      setValue("image", imageUrl);
     }
   }, [imageUrl]);
 
@@ -104,7 +83,7 @@ export function TechnologyForm({ technology }: Props) {
 
         <FileInput
           title="Imagem"
-          error={errors.imageUrl}
+          error={errors.image}
           setImageLocal={setImageLocal}
           imageLocal={imageLocal}
           setImageUrl={setImageUrl}
@@ -115,7 +94,7 @@ export function TechnologyForm({ technology }: Props) {
         <input
           type="hidden"
           disabled
-          {...register("imageUrl", {
+          {...register("image", {
             required: true,
           })}
         />

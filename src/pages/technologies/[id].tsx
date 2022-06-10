@@ -45,8 +45,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       id: doc.id,
       email: doc.data().email,
       name: doc.data().name,
-      imageUrl: doc.data().imageUrl,
+      image: doc.data().image,
       created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
+      last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
     });
   });
 

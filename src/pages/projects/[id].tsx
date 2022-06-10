@@ -4,9 +4,10 @@ import { GetServerSideProps } from "next"
 import { getSession } from "next-auth/react";
 import { BackButton } from "../../components/BackButton";
 import { ProjectForm } from "../../components/Form/ProjectForm";
+import { TechnologyForm } from "../../components/Form/TechnologyForm";
 import { Layout } from "../../components/Layout";
 import { database } from "../../lib/firebase";
-import { Project } from "../../types";
+import { Project, Technology } from "../../types";
 
 interface Props {
   project: Project;
@@ -16,7 +17,7 @@ export default function Update({ project }: Props) {
   return (
     <Layout title="Projetos">
       <BackButton destination="/projects" />
-      <ProjectForm project={project} />
+      <ProjectForm project={project} /> { /* Update */}
     </Layout>
   );
 }
@@ -45,12 +46,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       id: doc.id,
       email: doc.data().email,
       name: doc.data().name,
-      imageUrl: doc.data().imageUrl,
-      created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
-      deploy: doc.data().deploy,
       description: doc.data().description,
       repository: doc.data().repository,
+      deploy: doc.data().deploy,
+      image: doc.data().image,
       technologies: doc.data().technologies,
+      created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
+      last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
     });
   });
 

@@ -4,12 +4,19 @@ export type User = {
   image: string;
 }
 
+export type ImageLocal = {
+  image: string;
+  name: string;
+  size: string;
+}
+
 export type Technology = {
   id: string;
   email: string;
   name: string;
-  imageUrl: string;
+  image: string;
   created_at: string;
+  last_update: string;
 }
 
 export type Project = {
@@ -19,15 +26,8 @@ export type Project = {
   description: string;
   repository: string;
   deploy: string;
-  imageUrl: string;
-  created_at: string;
-  technologies: Array<{
-    technologyId: string;
-  }>;
-}
-
-export type ImageLocal = {
   image: string;
-  name: string;
-  size: string;
+  technologies: Array<string>;
+  created_at: string;
+  last_update: string;
 }

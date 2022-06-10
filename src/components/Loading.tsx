@@ -7,11 +7,13 @@ interface Props {
 
 export function Loading({ width = 20, height = 20 }: Props) {
   return (
-    <ReactLoading
-      type="spin"
-      height={height}
-      width={width}
-      color="#007fff"
-    />
+    <div className="flex justify-center items-center">
+      <ReactLoading
+        type="spin"
+        height={height}
+        width={width}
+        color="#007fff"
+      />
+    </div>
   );
 }

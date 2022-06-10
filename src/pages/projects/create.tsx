@@ -6,9 +6,9 @@ import { ProjectForm } from "../../components/Form/ProjectForm";
 
 export default function Create() {
   return (
-    <Layout title="Adicionar projeto">
+    <Layout title="Cadastrar projeto">
       <BackButton destination="/projects" />
-      <ProjectForm />
+      <ProjectForm /> { /* Create */}
     </Layout>
   );
 }

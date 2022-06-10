@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useProjects } from "../../hooks/useProjects";
 import { useTechnologies } from "../../hooks/useTechnologies";
 import { database } from "../../lib/firebase";
 import { ImageLocal, Project, Technology } from "../../types";
@@ -15,143 +16,74 @@ interface Props {
   project?: Project;
 }
 
-type Inputs = {
+export type ProjectInputs = {
   name: string;
   description: string;
   repository: string;
   deploy: string;
-  imageUrl: string;
-  technologies: Array<{
-    technologyId: string;
-  }>;
+  image: string;
+  technologies: Array<string>;
 }
 
 export function ProjectForm({ project }: Props) {
+  const { createProject, updateProject } = useProjects();
   const { technologies } = useTechnologies();
-  const { data: session } = useSession();
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Inputs>({
+
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<ProjectInputs>({
     defaultValues: {
       name: project ? project.name : "",
       description: project ? project.description : "",
       repository: project ? project.repository : "",
       deploy: project ? project.deploy : "",
-      imageUrl: project ? project.imageUrl : "",
-      technologies: project ? project.technologies : [],
+      image: project ? project.image : "",
+      technologies: ["HTML", "CSS", "Javascript"],
     }
   });
 
   const [imageLocal, setImageLocal] = useState<ImageLocal | null>(null);
-  const [imageUrl, setImageUrl] = useState(project ? project.imageUrl : "");
-  const [chosenList, setChosenList] = useState<Technology[]>([]);
+  const [imageUrl, setImageUrl] = useState(project ? project.image : "");
 
   const mode = !project ? "create" : "update";
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<ProjectInputs> = async (data) => {
     return mode === "create" ?
-      createProject(data) :
-      updateProject(data, project?.id + "");
+      onCreateProject(data) :
+      onUpdateProject(data, project?.id + "");
   }
 
-  async function createProject(data: Inputs) {
-    try {
-      const {
-        name,
-        description,
-        repository,
-        deploy,
-        imageUrl,
-        technologies,
-      } = data;
-
-      const docRef = await addDoc(collection(database, "projects"), {
-        name,
-        description,
-        repository,
-        deploy,
-        imageUrl,
-        technologies,
-        email: session?.user?.email,
-        created_at: new Date().toISOString(),
-      });
-
+  async function onCreateProject(data: ProjectInputs) {
+    createProject(data).then(() => {
       setValue("name", "");
       setValue("description", "");
       setValue("repository", "");
       setValue("deploy", "");
-      setValue("imageUrl", "");
+      setValue("image", "");
       setValue("technologies", []);
 
       setImageLocal(null);
       setImageUrl("");
-      setChosenList([]);
 
-      toast.success("Created");
-    } catch (error) {
-      toast.error("Error");
-    }
+      toast.success("Projeto criado");
+    }).catch(error => {
+      toast.success("Houve um erro");
+    });
   };
 
-  async function updateProject(data: Inputs, projectId: string) {
-    try {
-      const {
-        name,
-        description,
-        repository,
-        deploy,
-        imageUrl,
-        technologies,
-      } = data;
-
-      const docRef = await updateDoc(doc(database, "projects", projectId), {
-        name,
-        description,
-        repository,
-        deploy,
-        imageUrl,
-        technologies,
-        created_at: new Date().toISOString(),
-      })
-
-      toast.success("Updated");
-
-    } catch (error) {
-      toast.error("Error");
-    }
+  async function onUpdateProject(data: ProjectInputs, projectId: string) {
+    updateProject(data, projectId).then(() => {
+      toast.success("Dados salvos");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
   }
 
   useEffect(() => {
     if (imageUrl) {
-      setValue("imageUrl", imageUrl, { shouldValidate: true });
+      setValue("image", imageUrl, { shouldValidate: true });
     } else {
-      setValue("imageUrl", imageUrl);
+      setValue("image", imageUrl);
     }
   }, [imageUrl]);
-
-  useEffect(() => {
-    if (chosenList.length > 0) {
-      const technologiesId = chosenList.map(item => {
-        return {
-          technologyId: item.id
-        }
-      });
-
-      setValue("technologies",
-        technologiesId,
-        { shouldValidate: true });
-    } else {
-      setValue("technologies", []);
-    }
-  }, [chosenList]);
-
-  useEffect(() => {
-    if (!!technologies.length && project) {
-      const chosenList = project.technologies.map(({ technologyId }) => {
-        return technologies.find(item => item.id === technologyId);
-      });
-
-      setChosenList(chosenList as Array<Technology>);
-    }
-  }, [technologies]);
 
   return (
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
@@ -190,11 +122,11 @@ export function ProjectForm({ project }: Props) {
           })}
         />
 
-        <TechnologiesInput
+        {/* <TechnologiesInput
           chosenList={chosenList}
           setChosenList={setChosenList}
           error={errors.technologies}
-        />
+        /> */}
 
         <input
           type="hidden"
@@ -206,7 +138,7 @@ export function ProjectForm({ project }: Props) {
 
         <FileInput
           title="Imagem"
-          error={errors.imageUrl}
+          error={errors.image}
           setImageLocal={setImageLocal}
           imageLocal={imageLocal}
           setImageUrl={setImageUrl}
@@ -217,7 +149,7 @@ export function ProjectForm({ project }: Props) {
         <input
           type="hidden"
           disabled
-          {...register("imageUrl", {
+          {...register("image", {
             required: true,
           })}
         />

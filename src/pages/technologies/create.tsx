@@ -6,7 +6,7 @@ import { BackButton } from "../../components/BackButton";
 
 export default function Create() {
   return (
-    <Layout title="Adicionar tecnologia">
+    <Layout title="Cadastrar tecnologia">
       <BackButton destination="/technologies" />
       <TechnologyForm /> { /* Create */}
     </Layout>
