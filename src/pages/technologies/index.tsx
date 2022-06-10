@@ -7,6 +7,7 @@ import { Table } from "../../components/Table";
 import { useTechnologies } from "../../hooks/useTechnologies";
 import { doc, deleteDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import { useProjects } from "../../hooks/useProjects";
 
 
 export default function Technologies() {
@@ -16,8 +17,24 @@ export default function Technologies() {
     technologies,
   } = useTechnologies();
 
+  const { projects } = useProjects();
+
   async function removeTechnology(technologyId: string) {
-    await deleteDoc(doc(database, "technologies", technologyId));
+    let exists = false;
+
+    projects.map(project => {
+      project.technologies.map(technology => {
+        if(technology.technologyId === technologyId) {
+          exists = true;
+        }
+      });
+    });
+
+    if(exists) {
+      throw new Error("Tecnologia cadastrada em projetos");
+    }
+
+    deleteDoc(doc(database, "technologies", technologyId));
   }
 
   async function removeTechnologies() {
@@ -27,7 +44,7 @@ export default function Technologies() {
         toast.success("Deleted(s)");
       })
       .catch(error => {
-        toast.success("Error");
+        toast.error("Error");
       });
   }
 
