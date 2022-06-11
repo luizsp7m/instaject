@@ -19,7 +19,7 @@ export default function App() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <button onClick={() => signIn()} className="bg-violet-600 w-full rounded h-14 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-violet-500 hover:bg-violet-500 transition-colors duration-200">
+            <button type="button" onClick={() => signIn()} className="bg-violet-600 w-full rounded h-14 flex items-center justify-center gap-2 focus:ring-violet-500 hover:bg-violet-500">
               <AiFillGithub size={22} />
               <span className="text-sm">Iniciar sessão com GitHub</span>
             </button>

@@ -5,10 +5,16 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        "modal": "rgba(0, 0, 0, 0.40)"
+      },
+
       fontFamily: {
         "poppins": ["Poppins", "sans-serif"]
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwind-scrollbar"),
+  ],
 }

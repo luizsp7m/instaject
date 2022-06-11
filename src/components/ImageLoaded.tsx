@@ -38,7 +38,7 @@ export function ImageLoaded({
           <Loading />
         ) : (
           <div className="flex flex-col gap-2 items-end">
-            <button onClick={onDeleteImage} className="flex items-center gap-2 text-red-400 text-sm hover:text-red-300 transition-colors duration-200">
+            <button type="button" onClick={onDeleteImage} className="flex items-center gap-2 text-red-400 text-sm hover:text-red-300">
               <BiTrashAlt size={18} />
               <span>Excluir</span>
             </button>

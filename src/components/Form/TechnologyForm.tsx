@@ -6,8 +6,10 @@ import { TextInput } from "../Input/TextInput";
 import { Loading } from "../Loading";
 import { toast } from "react-toastify";
 import { useTechnologies } from "../../hooks/useTechnologies";
-import { BiTrash } from "react-icons/bi";
 import { useProjects } from "../../hooks/useProjects";
+import { DeleteButton } from "./DeleteButton";
+import { SubmitButton } from "./SubmitButton";
+import { useRouter } from "next/router";
 
 interface Props {
   technology?: Technology;
@@ -21,6 +23,8 @@ export type TechnologyInputs = {
 export function TechnologyForm({ technology }: Props) {
   const { createTechnology, updateTechnology, removeTechnology } = useTechnologies();
   const { projects } = useProjects();
+
+  const Router = useRouter();
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<TechnologyInputs>({
     defaultValues: {
@@ -74,7 +78,7 @@ export function TechnologyForm({ technology }: Props) {
     }
 
     removeTechnology(technology?.id + "").then(() => {
-      toast.success("Deletado");
+      Router.push("/technologies");
     }).catch(error => {
       toast.error("Houve um erro");
     });
@@ -92,7 +96,7 @@ export function TechnologyForm({ technology }: Props) {
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
       <h1>Formulário</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 items-start">
         <TextInput
           title="Nome"
           error={errors.name}
@@ -111,20 +115,6 @@ export function TechnologyForm({ technology }: Props) {
           mode={mode}
         />
 
-        {technology && (
-          <button
-            type="button"
-            className="flex items-center gap-2 text-red-300 text-sm"
-            onClick={onRemoveTechnology}
-          >
-            <BiTrash
-              size={20}
-            />
-
-            <span>Excluir tecnologia</span>
-          </button>
-        )}
-
         <input
           type="hidden"
           disabled
@@ -133,11 +123,9 @@ export function TechnologyForm({ technology }: Props) {
           })}
         />
 
-        <button disabled={isSubmitting} type="submit" className="flex items-center justify-center bg-sky-500 rounded h-12 px-4 focus:outline-none hover:bg-sky-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-400 hover:bg-sky-400">
-          {isSubmitting ? (
-            <Loading />
-          ) : "Guardar"}
-        </button>
+        <SubmitButton isSubmitting={isSubmitting} />
+
+        {technology && <DeleteButton onRemove={onRemoveTechnology} />}
       </form>
     </div>
   );

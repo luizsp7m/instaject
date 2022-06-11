@@ -3,10 +3,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useProjects } from "../../hooks/useProjects";
 import { ImageLocal, Project } from "../../types";
+import { DeleteButton } from "./DeleteButton";
 import { FileInput } from "../Input/FileInput";
 import { TechnologiesInput } from "../Input/TechnologiesInput";
 import { TextInput } from "../Input/TextInput";
 import { Loading } from "../Loading";
+import { SubmitButton } from "./SubmitButton";
+import { useRouter } from "next/router";
 
 interface Props {
   project?: Project;
@@ -23,6 +26,8 @@ export type ProjectInputs = {
 
 export function ProjectForm({ project }: Props) {
   const { createProject, updateProject, removeProject } = useProjects();
+
+  const Router = useRouter();
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<ProjectInputs>({
     defaultValues: {
@@ -75,7 +80,7 @@ export function ProjectForm({ project }: Props) {
 
   function onRemoveProject() {
     removeProject(project?.id + "").then(() => {
-      toast.success("Projeto removido");
+      Router.push("/projects");
     }).catch(error => {
       toast.error("Houve um erro");
     })
@@ -103,7 +108,7 @@ export function ProjectForm({ project }: Props) {
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
       <h1>Formulário</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 items-start">
         <TextInput
           title="Nome"
           error={errors.name}
@@ -168,22 +173,10 @@ export function ProjectForm({ project }: Props) {
           })}
         />
 
-        {project && (
-          <button
-            type="button"
-            className="bg-red-300 p-3"
-            onClick={onRemoveProject}
-          >
-            Remove
-          </button>
-        )}
+        <SubmitButton isSubmitting={isSubmitting} />
 
-        <button disabled={isSubmitting} type="submit" className="flex items-center justify-center bg-sky-500 rounded h-12 px-4 focus:outline-none hover:bg-sky-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-400 hover:bg-sky-400">
-          {isSubmitting ? (
-            <Loading />
-          ) : "Guardar"}
-        </button>
+        {project && <DeleteButton onRemove={onRemoveProject} />}
       </form>
-    </div>
+    </div >
   );
 }

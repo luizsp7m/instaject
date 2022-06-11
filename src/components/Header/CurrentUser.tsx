@@ -12,6 +12,7 @@ export function CurrentUser({ username, image }: Props) {
         <h5 className="font-medium">{username}</h5>
 
         <button
+          type="button"
           onClick={() => signOut()}
           className="text-slate-400 text-sm hover:text-slate-300 transition-colors"
         >

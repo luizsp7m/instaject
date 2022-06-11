@@ -18,7 +18,7 @@ export function PageHeader({ title, amount, destination }: Props) {
 
         <Link href={destination} passHref>
           <a>
-            <button className="bg-sky-500 rounded h-12 px-4 flex items-center justify-center gap-2 focus:outline-none hover:bg-sky-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-400 hover:bg-sky-400">
+            <button type="button" className="bg-sky-500 rounded h-12 px-4 flex items-center justify-center gap-2 hover:bg-sky-400 focus:ring-sky-400">
               <AiOutlinePlus size={18} />
               <span className="text-sm font-medium">Adicionar</span>
             </button>

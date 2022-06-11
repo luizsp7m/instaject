@@ -40,14 +40,14 @@ export function TechnologiesInput({ chosenTechnologies, setChosenTechnologies, e
 
       <button
         type="button"
-        className="bg-gray-700 h-12 rounded text-sm"
+        className={`bg-gray-700 h-12 rounded text-sm focus:ring-gray-700 ${error ? "text-red-300" : "text-gray-400"}`}
         onClick={() => setSelectIsOpen(!selectIsOpen)}
       >
         {selectIsOpen ? "Fechar" : chosenTechnologies.length > 0 ? `${chosenTechnologies.length} tecnologia(s) selecionada(s)` : "Selecione uma ou mais tecnologias"}
       </button>
 
       {selectIsOpen && (
-        <div className="flex flex-col bg-gray-700 text-sm rounded overflow-x-hidden overflow-y-auto max-h-44">
+        <div className="flex flex-col bg-gray-700 text-sm rounded overflow-x-hidden overflow-y-auto max-h-44 scrollbar-thumb-gray-500 scrollbar-track-transparent scrollbar-thin">
           {technologies.map(technology => (
             <div
               onClick={() => addToChosenTechnologies(technology.id)}

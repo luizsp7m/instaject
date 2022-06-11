@@ -5,6 +5,7 @@
 - Landing Page
 - Tela de início do dashboard
 - Sidebar no mobile
+- Modal de aviso quando sair da página
 
 #### Funciona, mas eu posso melhorar
 - Maneira como o SSR filtra os dados para atualizar
