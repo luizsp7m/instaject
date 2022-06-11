@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { addDoc, collection, doc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { TechnologyInputs } from "../components/Form/TechnologyForm";
@@ -11,6 +11,7 @@ interface TechnologiesContextData {
   technologiesIsLoading: boolean;
   createTechnology: (data: TechnologyInputs) => Promise<void>;
   updateTechnology: (data: TechnologyInputs, technologyId: string) => Promise<void>;
+  removeTechnology: (technologyId: string) => Promise<void>;
 }
 
 interface TechnologiesProviderProps {
@@ -71,6 +72,10 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
     });
   }
 
+  async function removeTechnology(technologyId: string) {
+    await deleteDoc(doc(database, "technologies", technologyId));
+  }
+
   useEffect(() => {
     if (session?.user) {
       getTechnologies();
@@ -83,6 +88,7 @@ export function TechnologiesProvider({ children }: TechnologiesProviderProps) {
       technologiesIsLoading,
       createTechnology,
       updateTechnology,
+      removeTechnology,
     }}>
       {children}
     </TechnologiesContext.Provider>

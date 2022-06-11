@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { addDoc, collection, doc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { ProjectInputs } from "../components/Form/ProjectForm";
@@ -11,6 +11,7 @@ interface ProjectsContextData {
   projectsIsLoading: boolean;
   createProject: (data: ProjectInputs) => Promise<void>;
   updateProject: (data: ProjectInputs, projectId: string) => Promise<void>;
+  removeProject: (projectId: string) => Promise<void>;
 }
 
 interface ProjectsProviderProps {
@@ -46,12 +47,12 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
           repository: doc.data().repository,
           deploy: doc.data().deploy,
           image: doc.data().image,
-          technologies: [],
+          technologies: doc.data().technologies,
           created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
           last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
         });
       });
-      
+
       setProjects(arrayDocs);
       setProjectsIsLoading(false);
     });
@@ -75,6 +76,10 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     });
   }
 
+  async function removeProject(projectId: string) {
+    await deleteDoc(doc(database, "projects", projectId));
+  }
+
   useEffect(() => {
     if (session?.user) {
       getProjects();
@@ -86,7 +91,8 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
       projects,
       projectsIsLoading,
       createProject,
-      updateProject
+      updateProject,
+      removeProject,
     }}>
       {children}
     </ProjectsContext.Provider>

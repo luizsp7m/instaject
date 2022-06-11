@@ -1,36 +1,35 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { FieldError } from "react-hook-form";
 import { useTechnologies } from "../../hooks/useTechnologies";
 import { Technology } from "../../types";
 
 interface Props {
-  chosenList: Array<Technology>;
-  setChosenList: Dispatch<SetStateAction<Technology[]>>;
+  chosenTechnologies: Array<string>;
+  setChosenTechnologies: Dispatch<SetStateAction<string[]>>
   error: any;
 }
 
-export function TechnologiesInput({ chosenList, setChosenList, error }: Props) {
+export function TechnologiesInput({ chosenTechnologies, setChosenTechnologies, error }: Props) {
   const { technologies } = useTechnologies();
 
   const [selectIsOpen, setSelectIsOpen] = useState(false);
 
-  function addToChosenList(technology: Technology) {
-    const updateChosenList = [...chosenList];
-    const exists = updateChosenList.find(item => item.id === technology.id);
+  function addToChosenTechnologies(technologyId: string) {
+    const updateChosenTechnologies = [...chosenTechnologies];
+    const exists = updateChosenTechnologies.includes(technologyId);
 
     if (exists) {
-      const technologyIndex = updateChosenList.findIndex(item => item.id === technology.id);
-      updateChosenList.splice(technologyIndex, 1);
-      setChosenList(updateChosenList);
+      const technologyIndex = updateChosenTechnologies.findIndex(item => item === technologyId);
+      updateChosenTechnologies.splice(technologyIndex, 1);
+      setChosenTechnologies(updateChosenTechnologies);
       return;
     }
 
-    updateChosenList.push(technology);
-    setChosenList(updateChosenList);
+    updateChosenTechnologies.push(technologyId);
+    setChosenTechnologies(updateChosenTechnologies);
   }
 
-  function alreadyInList(technologyId: string) {
-    const exists = chosenList.find(item => item.id === technologyId);
+  function alreadyInChosenTechnologies(technologyId: string) {
+    const exists = chosenTechnologies.includes(technologyId);
 
     return exists ? true : false;
   }
@@ -41,23 +40,27 @@ export function TechnologiesInput({ chosenList, setChosenList, error }: Props) {
 
       <button
         type="button"
+        className="bg-gray-700 h-12 rounded text-sm"
         onClick={() => setSelectIsOpen(!selectIsOpen)}
-        className="h-12 rounded bg-gray-700 px-4 text-sm text-gray-200 focus:outline-none"
       >
-        { selectIsOpen ? "Fechar" : chosenList.length > 0 ? `${chosenList.length} tecnologia(s) selecionada(s)` : "Selecione uma ou mais tecnologias" }
+        {selectIsOpen ? "Fechar" : chosenTechnologies.length > 0 ? `${chosenTechnologies.length} tecnologia(s) selecionada(s)` : "Selecione uma ou mais tecnologias"}
       </button>
 
       {selectIsOpen && (
-        <div className="flex flex-col bg-gray-700 rounded overflow-auto max-h-36">
+        <div className="flex flex-col bg-gray-700 text-sm rounded overflow-x-hidden overflow-y-auto max-h-44">
           {technologies.map(technology => (
-            <div key={technology.id} onClick={() => addToChosenList(technology)} className={`flex items-center gap-2 p-2 hover:bg-sky-400 cursor-pointer ${alreadyInList(technology.id) && "bg-sky-500"}`}>
+            <div
+              onClick={() => addToChosenTechnologies(technology.id)}
+              className={`flex items-center px-4 py-2 gap-4 hover:bg-sky-300 cursor-pointer transition-colors duration-100 ${alreadyInChosenTechnologies(technology.id) && "bg-sky-400"}`}
+              key={technology.id}
+            >
               <img
-                src={technology.imageUrl}
-                alt={technology.imageUrl}
-                className="h-8 w-8 rounded object-cover"
+                className="h-10 w-10 rounded object-cover"
+                src={technology.image}
+                alt={technology.name}
               />
 
-              <span className="text-sm text-gray-300">{technology.name}</span>
+              <span>{technology.name}</span>
             </div>
           ))}
         </div>

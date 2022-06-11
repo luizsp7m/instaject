@@ -1,7 +1,7 @@
 #### Próximos passos
-- Deletar tecnologias e projetos
-- Selecionar tecnologias em projetos
-- Não deixar apagar uma tecnologia se ela está cadastrada em um ou mais projetos
+- Deletar tecnologias e projetos - Feito
+- Selecionar tecnologias em projetos - Feito
+- Não deixar apagar uma tecnologia se ela está cadastrada em um ou mais projetos - Feito
 - Landing Page
 - Tela de início do dashboard
 - Sidebar no mobile

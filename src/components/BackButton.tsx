@@ -1,6 +1,6 @@
-import { BiArrowBack } from "react-icons/bi";
-
 import Link from "next/link";
+
+import { BiArrowBack } from "react-icons/bi";
 
 interface Props {
   destination: string;

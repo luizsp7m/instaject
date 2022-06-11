@@ -1,14 +1,13 @@
-import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { database } from "../../lib/firebase";
 import { ImageLocal, Technology } from "../../types";
 import { FileInput } from "../Input/FileInput";
 import { TextInput } from "../Input/TextInput";
 import { Loading } from "../Loading";
 import { toast } from "react-toastify";
 import { useTechnologies } from "../../hooks/useTechnologies";
+import { BiTrash } from "react-icons/bi";
+import { useProjects } from "../../hooks/useProjects";
 
 interface Props {
   technology?: Technology;
@@ -20,7 +19,8 @@ export type TechnologyInputs = {
 };
 
 export function TechnologyForm({ technology }: Props) {
-  const { createTechnology, updateTechnology } = useTechnologies();
+  const { createTechnology, updateTechnology, removeTechnology } = useTechnologies();
+  const { projects } = useProjects();
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<TechnologyInputs>({
     defaultValues: {
@@ -52,9 +52,29 @@ export function TechnologyForm({ technology }: Props) {
     });
   };
 
-  async function onUpdateTechnology(data: TechnologyInputs, technologyId: string) {
+  function onUpdateTechnology(data: TechnologyInputs, technologyId: string) {
     updateTechnology(data, technologyId).then(() => {
       toast.success("Dados salvos");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
+  }
+
+  function onRemoveTechnology() {
+    let exists = false;
+
+    projects.map(project => {
+      if (project.technologies.includes(technology?.id + "")) {
+        exists = true;
+      }
+    });
+
+    if (exists) {
+      return toast.error("Tecnologia cadastrada em um ou mais projetos")
+    }
+
+    removeTechnology(technology?.id + "").then(() => {
+      toast.success("Deletado");
     }).catch(error => {
       toast.error("Houve um erro");
     });
@@ -90,6 +110,20 @@ export function TechnologyForm({ technology }: Props) {
           imageUrl={imageUrl}
           mode={mode}
         />
+
+        {technology && (
+          <button
+            type="button"
+            className="flex items-center gap-2 text-red-300 text-sm"
+            onClick={onRemoveTechnology}
+          >
+            <BiTrash
+              size={20}
+            />
+
+            <span>Excluir tecnologia</span>
+          </button>
+        )}
 
         <input
           type="hidden"

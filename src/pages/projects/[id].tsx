@@ -4,10 +4,9 @@ import { GetServerSideProps } from "next"
 import { getSession } from "next-auth/react";
 import { BackButton } from "../../components/BackButton";
 import { ProjectForm } from "../../components/Form/ProjectForm";
-import { TechnologyForm } from "../../components/Form/TechnologyForm";
 import { Layout } from "../../components/Layout";
 import { database } from "../../lib/firebase";
-import { Project, Technology } from "../../types";
+import { Project } from "../../types";
 
 interface Props {
   project: Project;

@@ -1,12 +1,8 @@
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useProjects } from "../../hooks/useProjects";
-import { useTechnologies } from "../../hooks/useTechnologies";
-import { database } from "../../lib/firebase";
-import { ImageLocal, Project, Technology } from "../../types";
+import { ImageLocal, Project } from "../../types";
 import { FileInput } from "../Input/FileInput";
 import { TechnologiesInput } from "../Input/TechnologiesInput";
 import { TextInput } from "../Input/TextInput";
@@ -26,8 +22,7 @@ export type ProjectInputs = {
 }
 
 export function ProjectForm({ project }: Props) {
-  const { createProject, updateProject } = useProjects();
-  const { technologies } = useTechnologies();
+  const { createProject, updateProject, removeProject } = useProjects();
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<ProjectInputs>({
     defaultValues: {
@@ -36,12 +31,13 @@ export function ProjectForm({ project }: Props) {
       repository: project ? project.repository : "",
       deploy: project ? project.deploy : "",
       image: project ? project.image : "",
-      technologies: ["HTML", "CSS", "Javascript"],
+      technologies: project ? project.technologies : [],
     }
   });
 
   const [imageLocal, setImageLocal] = useState<ImageLocal | null>(null);
   const [imageUrl, setImageUrl] = useState(project ? project.image : "");
+  const [chosenTechnologies, setChosenTechnologies] = useState<string[]>(project ? project.technologies : []);
 
   const mode = !project ? "create" : "update";
 
@@ -51,7 +47,7 @@ export function ProjectForm({ project }: Props) {
       onUpdateProject(data, project?.id + "");
   }
 
-  async function onCreateProject(data: ProjectInputs) {
+  function onCreateProject(data: ProjectInputs) {
     createProject(data).then(() => {
       setValue("name", "");
       setValue("description", "");
@@ -69,12 +65,20 @@ export function ProjectForm({ project }: Props) {
     });
   };
 
-  async function onUpdateProject(data: ProjectInputs, projectId: string) {
+  function onUpdateProject(data: ProjectInputs, projectId: string) {
     updateProject(data, projectId).then(() => {
       toast.success("Dados salvos");
     }).catch(error => {
       toast.error("Houve um erro");
     });
+  }
+
+  function onRemoveProject() {
+    removeProject(project?.id + "").then(() => {
+      toast.success("Projeto removido");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    })
   }
 
   useEffect(() => {
@@ -84,6 +88,16 @@ export function ProjectForm({ project }: Props) {
       setValue("image", imageUrl);
     }
   }, [imageUrl]);
+
+  useEffect(() => {
+    if (chosenTechnologies.length > 0) {
+      setValue("technologies", chosenTechnologies, {
+        shouldValidate: true,
+      });
+    } else {
+      setValue("technologies", []);
+    }
+  }, [chosenTechnologies]);
 
   return (
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
@@ -122,11 +136,11 @@ export function ProjectForm({ project }: Props) {
           })}
         />
 
-        {/* <TechnologiesInput
-          chosenList={chosenList}
-          setChosenList={setChosenList}
+        <TechnologiesInput
+          chosenTechnologies={chosenTechnologies}
+          setChosenTechnologies={setChosenTechnologies}
           error={errors.technologies}
-        /> */}
+        />
 
         <input
           type="hidden"
@@ -153,6 +167,16 @@ export function ProjectForm({ project }: Props) {
             required: true,
           })}
         />
+
+        {project && (
+          <button
+            type="button"
+            className="bg-red-300 p-3"
+            onClick={onRemoveProject}
+          >
+            Remove
+          </button>
+        )}
 
         <button disabled={isSubmitting} type="submit" className="flex items-center justify-center bg-sky-500 rounded h-12 px-4 focus:outline-none hover:bg-sky-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-400 hover:bg-sky-400">
           {isSubmitting ? (

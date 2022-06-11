@@ -3,7 +3,6 @@ import { getSession } from "next-auth/react"
 import { Layout } from "../../components/Layout";
 import { PageHeader } from "../../components/PageHeader";
 import { Loading } from "../../components/Loading";
-import { TechnologiesTable } from "../../components/Table/TechnologiesTable";
 import { useProjects } from "../../hooks/useProjects";
 import { ProjectsTable } from "../../components/Table/ProjectsTable";
 

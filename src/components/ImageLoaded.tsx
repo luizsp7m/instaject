@@ -1,7 +1,7 @@
+import Link from "next/link";
+
 import { BiTrashAlt, BiLinkAlt, BiErrorCircle } from "react-icons/bi";
 import { Loading } from "./Loading";
-
-import Link from "next/link";
 
 interface Props {
   image: string;

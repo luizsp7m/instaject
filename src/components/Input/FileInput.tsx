@@ -1,3 +1,5 @@
+import fileSize from "filesize";
+
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { ImageLoaded } from "../ImageLoaded";
@@ -6,8 +8,6 @@ import { api } from "../../lib/api";
 import { FieldError } from "react-hook-form";
 import { ImageLocal } from "../../types";
 import { BiRefresh } from "react-icons/bi";
-
-import fileSize from "filesize";
 
 interface Props {
   title: string;
@@ -87,7 +87,7 @@ export function FileInput({
           alt="Imagem carregada"
         />
 
-        <button onClick={onDeleteImage} className="flex items-center gap-1 text-slate-400 text-sm hover:text-slate-300 transition-colors duration-200">
+        <button type="button" onClick={onDeleteImage} className="flex items-center gap-1 text-slate-400 text-sm hover:text-slate-300 transition-colors duration-200">
           <BiRefresh size={18} />
           <span>Substituir</span>
         </button>
