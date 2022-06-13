@@ -3,7 +3,7 @@ import { BiHomeAlt, BiBriefcaseAlt2, BiBookAlt } from "react-icons/bi";
 
 export function Nav() {
   return (
-    <div className="flex flex-col">
+    <div className="flex justify-center md:justify-start md:flex-col">
       <NavItem name="Início" page="/dashboard">
         <BiHomeAlt size={18} />
       </NavItem>

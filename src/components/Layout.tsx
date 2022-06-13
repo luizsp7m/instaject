@@ -26,10 +26,10 @@ export function Layout({ title, children }: Props) {
       <main className="h-screen">
         <Sidebar isOpen={sidebarIsOpen} />
 
-        <section className={`transition-all duration-300 ${sidebarIsOpen ? "pl-[350px]" : "pl-0"}`}>
+        <section className={`transition-all duration-300 ${sidebarIsOpen ? "md:pl-[350px]" : "md:pl-0"}`}>
           <Header onToggleSidebar={onToggleSidebar} />
 
-          <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 flex flex-col gap-6 scrollbar-thumb-gray-800 scrollbar-track-transparent scrollbar-thin">
+          <div className={`relative h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] overflow-y-auto p-4 flex flex-col gap-6 scrollbar-thumb-gray-800 scrollbar-track-transparent scrollbar-thin`}>
             {children}
           </div>
 

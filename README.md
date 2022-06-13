@@ -4,7 +4,7 @@
 - Não deixar apagar uma tecnologia se ela está cadastrada em um ou mais projetos - Feito
 - Landing Page
 - Tela de início do dashboard
-- Sidebar no mobile
+- Sidebar no mobile - Feito
 - Modal de aviso quando sair da página
 
 #### Funciona, mas eu posso melhorar

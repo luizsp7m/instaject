@@ -48,21 +48,25 @@ export function TechnologiesInput({ chosenTechnologies, setChosenTechnologies, e
 
       {selectIsOpen && (
         <div className="flex flex-col bg-gray-700 text-sm rounded overflow-x-hidden overflow-y-auto max-h-44 scrollbar-thumb-gray-500 scrollbar-track-transparent scrollbar-thin">
-          {technologies.map(technology => (
-            <div
-              onClick={() => addToChosenTechnologies(technology.id)}
-              className={`flex items-center px-4 py-2 gap-4 hover:bg-sky-300 cursor-pointer transition-colors duration-100 ${alreadyInChosenTechnologies(technology.id) && "bg-sky-400"}`}
-              key={technology.id}
-            >
-              <img
-                className="h-10 w-10 rounded object-cover"
-                src={technology.image}
-                alt={technology.name}
-              />
-
-              <span>{technology.name}</span>
-            </div>
-          ))}
+          {technologies.length > 0 ? (
+            technologies.map(technology => (
+              <div
+                onClick={() => addToChosenTechnologies(technology.id)}
+                className={`flex items-center px-4 py-2 gap-4 hover:bg-sky-300 cursor-pointer transition-colors duration-100 ${alreadyInChosenTechnologies(technology.id) && "bg-sky-400"}`}
+                key={technology.id}
+              >
+                <img
+                  className="h-10 w-10 rounded object-cover"
+                  src={technology.image}
+                  alt={technology.name}
+                />
+  
+                <span>{technology.name}</span>
+              </div>
+            ))
+          ) : (
+            <div className="px-4 py-4 text-center text-red-400">Nenhuma tecnologia cadastrada</div>
+          )}
         </div>
       )}
 

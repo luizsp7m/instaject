@@ -11,7 +11,7 @@ interface TechnologyItemProps {
 }
 
 export function TechnologiesTable({ technologies }: TechnologiesTableProps) {
-  if(technologies.length === 0) {
+  if (technologies.length === 0) {
     return <p className="text-sm text-gray-400 text-center">Nenhuma tecnologia cadastrada</p>
   }
 

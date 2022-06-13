@@ -63,6 +63,7 @@ export function ProjectForm({ project }: Props) {
 
       setImageLocal(null);
       setImageUrl("");
+      setChosenTechnologies([]);
 
       toast.success("Projeto criado");
     }).catch(error => {

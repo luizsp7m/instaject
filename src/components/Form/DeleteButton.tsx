@@ -18,10 +18,10 @@ export function DeleteButton({ onRemove }: Props) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-12 flex justify-center items-center gap-2 text-sm text-red-400 border rounded border-red-400 hover:bg-red-400 hover:text-white focus:ring-red-400"
+        className="flex justify-center items-center gap-2 text-sm text-red-400 hover:text-red-300 focus:ring-0 focus:ring-offset-0"
       >
         <BiTrash size={20} />
-        <span>Excluir</span>
+        <span>Excluir registro</span>
       </button>
 
       {isOpen && <DeleteModal 
