@@ -26,6 +26,20 @@ export function TechnologyForm({ technology }: Props) {
 
   const Router = useRouter();
 
+  const validations = {
+    name: {
+      required: "Campo obrigatório",
+      maxLength: {
+        value: 20,
+        message: "Máximo de 20 caracteres"
+      }
+    },
+
+    image: {
+      required: "Campo obrigatório"
+    },
+  }
+
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<TechnologyInputs>({
     defaultValues: {
       name: technology ? technology.name : "",
@@ -100,9 +114,7 @@ export function TechnologyForm({ technology }: Props) {
         <TextInput
           title="Nome"
           error={errors.name}
-          {...register("name", {
-            required: true,
-          })}
+          {...register("name", validations.name)}
         />
 
         <FileInput

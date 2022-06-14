@@ -10,7 +10,7 @@ export function BackButton({ destination }: Props) {
   return (
     <div className="flex">
       <Link href={destination} passHref>
-        <a href="" className="flex items-center gap-2 text-sm text-gray-400 hover:underline">
+        <a className="flex items-center gap-2 text-sm text-gray-400 hover:underline">
           <BiArrowBack />
           <span>Voltar</span>
         </a>

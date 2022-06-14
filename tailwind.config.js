@@ -5,6 +5,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        'auto': 'repeat(auto-fill, minmax(320px, 1fr))',
+      },
+
       colors: {
         "modal": "rgba(0, 0, 0, 0.40)"
       },

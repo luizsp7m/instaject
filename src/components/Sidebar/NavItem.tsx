@@ -13,9 +13,9 @@ export function NavItem({ name, page, children }: Props) {
   const router = useRouter();
 
   return (
-    <Link href={page}>
+    <Link href={page} passHref>
       <a className={`h-16 w-16 md:w-full flex justify-center md:justify-start items-center md:gap-4 md:px-4 hover:bg-sky-500 transition-colors ${router.asPath.startsWith(page) && "bg-sky-500"}`}>
-        { children }
+        {children}
         <span className="text-sm hidden md:block">{name}</span>
       </a>
     </Link>

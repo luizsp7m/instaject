@@ -16,19 +16,21 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between text-sm px-6 text-gray-400">
-        <span>Pré-visualização</span>
-        <span>Data da última modificação</span>
-      </div>
+    <div className="relative overflow-x-auto">
+      <div className="flex flex-col gap-4 w-[768px] sm:w-full">
+        <div className="flex justify-between text-sm px-6 text-gray-400">
+          <span>Pré-visualização</span>
+          <span>Data da última modificação</span>
+        </div>
 
-      <div className="border overflow-y-auto border-gray-800 rounded-md text-sm text-gray-400">
-        {projects.map(project => (
-          <ProjectItem
-            key={project.id}
-            project={project}
-          />
-        ))}
+        <div className="border overflow-y-auto border-gray-800 rounded-md text-sm text-gray-400">
+          {projects.map(project => (
+            <ProjectItem
+              key={project.id}
+              project={project}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useSession, signIn, getSession } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { AiFillGithub } from "react-icons/ai";
 
 import Head from "next/head";
@@ -33,7 +33,7 @@ export default function App() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  if(session) {
+  if (session) {
     return {
       redirect: {
         destination: "/dashboard",

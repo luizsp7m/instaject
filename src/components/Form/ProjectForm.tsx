@@ -7,7 +7,6 @@ import { DeleteButton } from "./DeleteButton";
 import { FileInput } from "../Input/FileInput";
 import { TechnologiesInput } from "../Input/TechnologiesInput";
 import { TextInput } from "../Input/TextInput";
-import { Loading } from "../Loading";
 import { SubmitButton } from "./SubmitButton";
 import { useRouter } from "next/router";
 
@@ -45,6 +44,44 @@ export function ProjectForm({ project }: Props) {
   const [chosenTechnologies, setChosenTechnologies] = useState<string[]>(project ? project.technologies : []);
 
   const mode = !project ? "create" : "update";
+
+  const validations = {
+    name: {
+      required: "Campo obrigatório",
+      maxLength: {
+        value: 20,
+        message: "Máximo de 20 caracteres"
+      }
+    },
+
+    description: {
+      required: "Campo obrigatório",
+      minLength: {
+        value: 16,
+        message: "Minimo de 16 caracteres"
+      },
+      maxLength: {
+        value: 104,
+        message: "Máximo de 104 caracteres"
+      }
+    },
+
+    repository: {
+      required: "Campo obrigatório",
+    },
+
+    deploy: {
+      required: "Campo obrigatório",
+    },
+
+    tecnologies: {
+      required: "Campo obrigatório",
+    },
+
+    image: {
+      required: "Campo obrigatório",
+    },
+  }
 
   const onSubmit: SubmitHandler<ProjectInputs> = async (data) => {
     return mode === "create" ?
@@ -113,33 +150,25 @@ export function ProjectForm({ project }: Props) {
         <TextInput
           title="Nome"
           error={errors.name}
-          {...register("name", {
-            required: true,
-          })}
+          {...register("name", validations.name)}
         />
 
         <TextInput
           title="Descrição"
           error={errors.description}
-          {...register("description", {
-            required: true,
-          })}
+          {...register("description", validations.description)}
         />
 
         <TextInput
           title="Repositório"
           error={errors.repository}
-          {...register("repository", {
-            required: true,
-          })}
+          {...register("repository", validations.repository)}
         />
 
         <TextInput
           title="Deploy"
           error={errors.deploy}
-          {...register("deploy", {
-            required: true,
-          })}
+          {...register("deploy", validations.deploy)}
         />
 
         <TechnologiesInput
@@ -151,9 +180,7 @@ export function ProjectForm({ project }: Props) {
         <input
           type="hidden"
           disabled
-          {...register("technologies", {
-            required: true,
-          })}
+          {...register("technologies", validations.tecnologies)}
         />
 
         <FileInput
@@ -169,9 +196,7 @@ export function ProjectForm({ project }: Props) {
         <input
           type="hidden"
           disabled
-          {...register("image", {
-            required: true,
-          })}
+          {...register("image", validations.image)}
         />
 
         <SubmitButton isSubmitting={isSubmitting} />

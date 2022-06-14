@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTechnologies } from "../../hooks/useTechnologies";
-import { Technology } from "../../types";
 
 interface Props {
   chosenTechnologies: Array<string>;
@@ -70,7 +69,7 @@ export function TechnologiesInput({ chosenTechnologies, setChosenTechnologies, e
         </div>
       )}
 
-      {error && <span className="text-sm text-red-300">Campo obrigatório</span>}
+      {error && <span className="text-sm text-red-300">{error.message}</span>}
     </div>
   );
 }

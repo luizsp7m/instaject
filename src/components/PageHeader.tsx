@@ -14,7 +14,7 @@ export function PageHeader({ title, amount, destination }: Props) {
       <h1 className="font-medium">{title}</h1>
 
       <div className="flex items-center gap-6">
-        <span className="text-sm text-slate-400">{amount} registro(s)</span>
+        <span className="hidden md:block text-sm text-slate-400">{amount} registro(s)</span>
 
         <Link href={destination} passHref>
           <a>

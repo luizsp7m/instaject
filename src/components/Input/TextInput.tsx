@@ -19,7 +19,7 @@ const TextInputBase: ForwardRefRenderFunction<HTMLInputElement, Props> = (
         className={`h-12 rounded bg-gray-700 px-4 text-sm text-gray-200 focus:outline-none ${error && "ring-2 ring-red-400"}`}
       />
 
-      {error && <span className="text-sm text-red-300">Campo obrigatório</span>}
+      {error && <span className="text-sm text-red-300">{error.message}</span>}
     </div>
   );
 }

@@ -67,9 +67,7 @@ export function FileInput({
     onDrop,
     multiple: false,
     accept: {
-      "image/jpeg": [],
-      "image/png": [],
-      "image/svg+xml": [],
+      "image/*": [],
     },
   });
 
@@ -116,7 +114,7 @@ export function FileInput({
         />
       )}
 
-      {error && <span className="text-sm text-red-300">Campo obrigatório</span>}
+      {error && <span className="text-sm text-red-300">{error.message}</span>}
     </div>
   );
 }
