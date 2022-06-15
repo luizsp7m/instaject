@@ -39,7 +39,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
 function ProjectItem({ project }: ProjectItemProps) {
   return (
     <Link href={`/projects/${project.id}`} passHref>
-      <a className="flex items-center justify-between py-4 px-6 border-b border-gray-800 hover:bg-gray-800 transition-colors duration-100">
+      <a className="flex items-center justify-between py-4 px-6 first:border-0 border-t border-gray-800 hover:bg-gray-800 transition-colors duration-100">
         <div className="flex items-center gap-4">
           <img
             className="h-10 w-10 object-cover rounded-full"

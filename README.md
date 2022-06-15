@@ -12,6 +12,6 @@
 - Upload de imagens
 
 #### O que eu tenho que corrigir
-- Remover a borda do último item da tabela
+- Remover a borda do último item da tabela - Feito
 - Lidar com erros no getProjects e getTechnologies
 - Warning quando um toast aparece e eu saio da página em seguida
