@@ -32,5 +32,8 @@ module.exports = {
   },
   plugins: [
     require("tailwind-scrollbar"),
+    require("tailwindcss-scoped-groups")({
+      groups: ["one", "two"],
+    }),
   ],
 }

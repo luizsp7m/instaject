@@ -11,15 +11,15 @@ interface Props {
 
 export function ProjectCard({ project }: Props) {
   return (
-    <div className="w-full bg-gray-800 rounded overflow-hidden relative cursor-pointer group">
+    <div className="w-full bg-gray-800 rounded overflow-hidden relative cursor-pointer group-one">
       <img
-        className="w-full h-[225px] object-cover group-hover:opacity-60 transition-opacity"
+        className="w-full h-[225px] object-cover group-scoped-hover:opacity-60 transition-opacity"
         src={project.image}
         alt={project.name}
       />
 
       <Link href={project.deploy}>
-        <a target={"_blank"} className="absolute h-12 w-12 bg-sky-500 rounded-full flex items-center justify-center top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-sky-400 transition-colors">
+        <a target={"_blank"} className="absolute h-12 w-12 bg-sky-500 rounded-full flex items-center justify-center top-2 left-2 opacity-0 group-one-hover:opacity-100 transition-opacity hover:bg-sky-400 transition-colors">
           <FiExternalLink />
         </a>
       </Link>
