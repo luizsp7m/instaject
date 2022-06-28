@@ -21,21 +21,25 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4">
               <h1 className="font-medium">Tecnologias</h1>
 
-              <div className="grid grid-cols-technologies-auto gap-4">
-                {technologies.map(technology => (
-                  <TechnologyCard key={technology.id} technology={technology} />
-                ))}
-              </div>
+              {technologies.length === 0 ? <p className="text-sm text-gray-400">Nenhuma tecnologia cadastrada</p> : (
+                <div className="grid grid-cols-technologies-auto gap-4">
+                  {technologies.map(technology => (
+                    <TechnologyCard key={technology.id} technology={technology} />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-4">
               <h1 className="font-medium">Projetos</h1>
 
-              <div className="grid grid-cols-projects-auto gap-4">
-                {projects.map(project => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
+              {projects.length === 0 ? <p className="text-sm text-gray-400">Nenhum projeto cadastrado</p> : (
+                <div className="grid grid-cols-projects-auto gap-4">
+                  {projects.map(project => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}

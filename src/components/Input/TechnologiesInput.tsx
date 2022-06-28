@@ -51,7 +51,7 @@ export function TechnologiesInput({ chosenTechnologies, setChosenTechnologies, e
             technologies.map(technology => (
               <div
                 onClick={() => addToChosenTechnologies(technology.id)}
-                className={`flex items-center px-4 py-2 gap-4 hover:bg-sky-300 cursor-pointer transition-colors duration-100 ${alreadyInChosenTechnologies(technology.id) && "bg-sky-400"}`}
+                className={`flex items-center px-4 py-2 gap-4 hover:bg-gray-600 cursor-pointer transition-colors duration-100 ${alreadyInChosenTechnologies(technology.id) && "bg-slate-600 hover:bg-slate-600"}`}
                 key={technology.id}
               >
                 <img
