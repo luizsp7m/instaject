@@ -31,29 +31,31 @@ export function FileInput({
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const onDrop = useCallback(async (uploadImage) => {
-    setImageLocal({
-      image: URL.createObjectURL(uploadImage[0]),
-      name: uploadImage[0].name,
-      size: fileSize(uploadImage[0].size),
-    });
+    if (uploadImage[0]) {
+      setImageLocal({
+        image: URL.createObjectURL(uploadImage[0]),
+        name: uploadImage[0].name,
+        size: fileSize(uploadImage[0].size),
+      });
 
-    setIsUploadingImage(true);
+      setIsUploadingImage(true);
 
-    const formData = new FormData();
-    formData.append("image", uploadImage[0]);
-    formData.append("key", process.env.NEXT_PUBLIC_IMGBB_KEY as string);
+      const formData = new FormData();
+      formData.append("image", uploadImage[0]);
+      formData.append("key", process.env.NEXT_PUBLIC_IMGBB_KEY as string);
 
-    const config = {
-      headers: { "content-type": "multipart/form-data" },
-    } as AxiosRequestConfig;
+      const config = {
+        headers: { "content-type": "multipart/form-data" },
+      } as AxiosRequestConfig;
 
-    try {
-      const respose = await api.post("https://api.imgbb.com/1/upload", formData, config);
-      setImageUrl(respose.data.data.url);
-    } catch (error) {
-      setImageUrl("");
-    } finally {
-      setIsUploadingImage(false);
+      try {
+        const respose = await api.post("https://api.imgbb.com/1/upload", formData, config);
+        setImageUrl(respose.data.data.url);
+      } catch (error) {
+        setImageUrl("");
+      } finally {
+        setIsUploadingImage(false);
+      }
     }
   }, []);
 
@@ -63,11 +65,14 @@ export function FileInput({
     isDragActive,
     isDragAccept,
     isDragReject,
+    fileRejections,
   } = useDropzone({
     onDrop,
     multiple: false,
     accept: {
-      "image/*": [],
+      "image/png": [],
+      "image/jpeg": [],
+      "image/gif": [],
     },
   });
 
