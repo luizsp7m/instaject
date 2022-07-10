@@ -9,7 +9,7 @@ module.exports = {
         "grayish": {
           700: "#243447",
           900: "#141D26",
-        }
+        },
       },
 
       fontFamily: {

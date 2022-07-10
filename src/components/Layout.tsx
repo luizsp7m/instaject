@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import { Fragment, ReactNode } from "react";
+import { ToastContainer } from "react-toastify";
 import { Header } from "./Header";
 
 interface Props {
@@ -17,11 +18,28 @@ export function Layout({ title, children }: Props) {
 
       <Header />
 
-      <section className="max-w-[1086px] w-full mx-auto pt-16">
-        <main className="px-8 py-12">
+      <section className="max-w-[1086px] w-full mx-auto pt-[5rem] min-h-[calc(100vh-4rem)]">
+        <main className="px-8 py-8">
           {children}
         </main>
       </section>
+
+      <footer className="flex justify-center items-center h-16 border-t-[0.05rem] border-t-gray-800">
+        ...
+      </footer>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </Fragment>
   );
 }

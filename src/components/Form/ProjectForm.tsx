@@ -22,8 +22,42 @@ export type ProjectInputs = {
   image: string;
 }
 
+const validations = {
+  name: {
+    required: "Campo obrigatório",
+    maxLength: {
+      value: 20,
+      message: "Máximo de 20 caracteres"
+    }
+  },
+
+  description: {
+    required: "Campo obrigatório",
+    minLength: {
+      value: 16,
+      message: "Minimo de 16 caracteres"
+    },
+    maxLength: {
+      value: 104,
+      message: "Máximo de 104 caracteres"
+    }
+  },
+
+  repository: {
+    required: "Campo obrigatório",
+  },
+
+  deploy: {
+    required: "Campo obrigatório",
+  },
+
+  image: {
+    required: "Campo obrigatório",
+  },
+}
+
 export function ProjectForm({ project }: Props) {
-  const { createProject } = useProjects();
+  const { createProject, updateProject, removeProject } = useProjects();
 
   const Router = useRouter();
 
@@ -42,42 +76,39 @@ export function ProjectForm({ project }: Props) {
 
   const mode = !project ? "create" : "update";
 
-  const validations = {
-    name: {
-      required: "Campo obrigatório",
-      maxLength: {
-        value: 20,
-        message: "Máximo de 20 caracteres"
-      }
-    },
-
-    description: {
-      required: "Campo obrigatório",
-      minLength: {
-        value: 16,
-        message: "Minimo de 16 caracteres"
-      },
-      maxLength: {
-        value: 104,
-        message: "Máximo de 104 caracteres"
-      }
-    },
-
-    repository: {
-      required: "Campo obrigatório",
-    },
-
-    deploy: {
-      required: "Campo obrigatório",
-    },
-
-    image: {
-      required: "Campo obrigatório",
-    },
+  const onSubmit: SubmitHandler<ProjectInputs> = async (data) => {
+    !project ? handleCreateProject(data) : handleUpdateProject(data, project.id)
   }
 
-  const onSubmit: SubmitHandler<ProjectInputs> = async (data) => {
-    createProject(data);
+  function handleCreateProject(data: ProjectInputs) {
+    createProject(data).then(() => {
+      setValue("name", "");
+      setValue("description", "");
+      setValue("repository", "");
+      setValue("deploy", "");
+      setValue("image", "");
+      setImageLocal(null);
+      setImageUrl("");
+      toast.success("Projeto criado");
+    }).catch(error => {
+      toast.success("Houve um erro");
+    });
+  };
+
+  function handleUpdateProject(data: ProjectInputs, projectId: string) {
+    updateProject(data, projectId).then(() => {
+      toast.success("Dados salvos");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
+  }
+
+  function handleRemoveProject(projectId: string) {
+    removeProject(projectId).then(() => {
+      Router.push("/");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    })
   }
 
   useEffect(() => {
@@ -136,6 +167,8 @@ export function ProjectForm({ project }: Props) {
         />
 
         <SubmitButton isSubmitting={isSubmitting} />
+
+        {project && <DeleteButton onRemove={() => handleRemoveProject(project.id)} />}
       </form>
     </div >
   );

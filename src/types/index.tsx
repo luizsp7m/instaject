@@ -1,13 +1,19 @@
+export type ImageLocal = {
+  image: string;
+  name: string;
+  size: string;
+}
+
 export type User = {
   name: string;
   email: string;
   image: string;
 }
 
-export type ImageLocal = {
-  image: string;
-  name: string;
-  size: string;
+export type Comment = {
+  id: string;
+  user: User;
+  comment: string;
 }
 
 export type Project = {
@@ -20,4 +26,6 @@ export type Project = {
   image: string;
   created_at: string;
   last_update: string;
+  comments?: Array<Comment>;
+  favorites?: Array<User>;
 }

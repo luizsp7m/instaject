@@ -1,9 +1,10 @@
 import { format } from "date-fns";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Layout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { ProjectCard } from "../components/ProjectCard";
+import { ProjectList } from "../components/ProjectList";
 import { database } from "../lib/firebase";
 import { Project } from "../types";
 
@@ -16,7 +17,12 @@ export default function Home() {
 
     const arrayDocs: Array<Project> = [];
 
-    const querySnapshot = await getDocs(collection(database, "projects"));
+    const q = query(
+      collection(database, "projects"),
+      orderBy("created_at", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
       arrayDocs.push({
@@ -42,16 +48,7 @@ export default function Home() {
 
   return (
     <Layout title="Início">
-      {projectsIsLoading ? <Loading /> : (
-        <div className="grid grid-cols-feed-layout gap-4">
-          {projects.map(project => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-            />
-          ))}
-        </div>
-      )}
+      {projectsIsLoading ? <Loading /> : <ProjectList projects={projects} />}
     </Layout>
   );
 }
