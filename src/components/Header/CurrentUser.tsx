@@ -7,7 +7,7 @@ interface Props {
 
 export function CurrentUser({ username, image }: Props) {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 z-10">
       <div className="flex flex-col items-end">
         <h5 className="font-medium">{username}</h5>
 

@@ -5,10 +5,10 @@ import { useProjects } from "../../hooks/useProjects";
 import { ImageLocal, Project } from "../../types";
 import { DeleteButton } from "./DeleteButton";
 import { FileInput } from "../Input/FileInput";
-import { TechnologiesInput } from "../Input/TechnologiesInput";
 import { TextInput } from "../Input/TextInput";
 import { SubmitButton } from "./SubmitButton";
 import { useRouter } from "next/router";
+import { BackButton } from "../BackButton";
 
 interface Props {
   project?: Project;
@@ -20,11 +20,10 @@ export type ProjectInputs = {
   repository: string;
   deploy: string;
   image: string;
-  technologies: Array<string>;
 }
 
 export function ProjectForm({ project }: Props) {
-  const { createProject, updateProject, removeProject } = useProjects();
+  const { createProject } = useProjects();
 
   const Router = useRouter();
 
@@ -35,13 +34,11 @@ export function ProjectForm({ project }: Props) {
       repository: project ? project.repository : "",
       deploy: project ? project.deploy : "",
       image: project ? project.image : "",
-      technologies: project ? project.technologies : [],
     }
   });
 
   const [imageLocal, setImageLocal] = useState<ImageLocal | null>(null);
   const [imageUrl, setImageUrl] = useState(project ? project.image : "");
-  const [chosenTechnologies, setChosenTechnologies] = useState<string[]>(project ? project.technologies : []);
 
   const mode = !project ? "create" : "update";
 
@@ -74,54 +71,13 @@ export function ProjectForm({ project }: Props) {
       required: "Campo obrigatório",
     },
 
-    tecnologies: {
-      required: "Campo obrigatório",
-    },
-
     image: {
       required: "Campo obrigatório",
     },
   }
 
   const onSubmit: SubmitHandler<ProjectInputs> = async (data) => {
-    return mode === "create" ?
-      onCreateProject(data) :
-      onUpdateProject(data, project?.id + "");
-  }
-
-  function onCreateProject(data: ProjectInputs) {
-    createProject(data).then(() => {
-      setValue("name", "");
-      setValue("description", "");
-      setValue("repository", "");
-      setValue("deploy", "");
-      setValue("image", "");
-      setValue("technologies", []);
-
-      setImageLocal(null);
-      setImageUrl("");
-      setChosenTechnologies([]);
-
-      toast.success("Projeto criado");
-    }).catch(error => {
-      toast.success("Houve um erro");
-    });
-  };
-
-  function onUpdateProject(data: ProjectInputs, projectId: string) {
-    updateProject(data, projectId).then(() => {
-      toast.success("Dados salvos");
-    }).catch(error => {
-      toast.error("Houve um erro");
-    });
-  }
-
-  function onRemoveProject() {
-    removeProject(project?.id + "").then(() => {
-      Router.push("/projects");
-    }).catch(error => {
-      toast.error("Houve um erro");
-    })
+    createProject(data);
   }
 
   useEffect(() => {
@@ -132,18 +88,10 @@ export function ProjectForm({ project }: Props) {
     }
   }, [imageUrl]);
 
-  useEffect(() => {
-    if (chosenTechnologies.length > 0) {
-      setValue("technologies", chosenTechnologies, {
-        shouldValidate: true,
-      });
-    } else {
-      setValue("technologies", []);
-    }
-  }, [chosenTechnologies]);
-
   return (
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
+      <BackButton destination="/" />
+
       <h1>Formulário</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 items-start">
@@ -171,18 +119,6 @@ export function ProjectForm({ project }: Props) {
           {...register("deploy", validations.deploy)}
         />
 
-        <TechnologiesInput
-          chosenTechnologies={chosenTechnologies}
-          setChosenTechnologies={setChosenTechnologies}
-          error={errors.technologies}
-        />
-
-        <input
-          type="hidden"
-          disabled
-          {...register("technologies", validations.tecnologies)}
-        />
-
         <FileInput
           title="Imagem"
           error={errors.image}
@@ -200,8 +136,6 @@ export function ProjectForm({ project }: Props) {
         />
 
         <SubmitButton isSubmitting={isSubmitting} />
-
-        {project && <DeleteButton onRemove={onRemoveProject} />}
       </form>
     </div >
   );

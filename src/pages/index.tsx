@@ -1,50 +1,57 @@
-import { signIn, getSession } from "next-auth/react";
-import { AiFillGithub } from "react-icons/ai";
+import { format } from "date-fns";
+import { collection, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Layout } from "../components/Layout";
+import { Loading } from "../components/Loading";
+import { ProjectCard } from "../components/ProjectCard";
+import { database } from "../lib/firebase";
+import { Project } from "../types";
 
-import Head from "next/head";
-import { GetServerSideProps } from "next";
+export default function Home() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsIsLoading, setProjectsIsLoading] = useState<boolean>(true);
 
-export default function App() {
+  async function getProjects() {
+    setProjectsIsLoading(true);
+
+    const arrayDocs: Array<Project> = [];
+
+    const querySnapshot = await getDocs(collection(database, "projects"));
+
+    querySnapshot.forEach((doc) => {
+      arrayDocs.push({
+        id: doc.id,
+        user: doc.data().user,
+        name: doc.data().name,
+        description: doc.data().description,
+        repository: doc.data().repository,
+        deploy: doc.data().deploy,
+        image: doc.data().image,
+        created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
+        last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
+      });
+    });
+
+    setProjects(arrayDocs);
+    setProjectsIsLoading(false);
+  }
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   return (
-    <div>
-      <Head>
-        <title>Dash Anything - SignIn</title>
-      </Head>
-
-      <div className="flex justify-center items-center h-screen p-4">
-        <div className="max-w-[320px] w-full rounded flex flex-col gap-8">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-2xl font-medium">Bem-vindo(a)!</h1>
-            <p className="text-md text-gray-400">Entre com a sua conta para acessar nossa plataforma</p>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <button type="button" onClick={() => signIn()} className="bg-violet-600 w-full rounded h-14 flex items-center justify-center gap-2 focus:ring-violet-500 hover:bg-violet-500">
-              <AiFillGithub size={22} />
-              <span className="text-sm">Iniciar sessão com GitHub</span>
-            </button>
-          </div>
+    <Layout title="Início">
+      {projectsIsLoading ? <Loading /> : (
+        <div className="grid grid-cols-feed-layout gap-4">
+          {projects.map(project => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+            />
+          ))}
         </div>
-      </div>
-    </div>
+      )}
+    </Layout>
   );
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/dashboard",
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: {
-
-    },
-  }
 }

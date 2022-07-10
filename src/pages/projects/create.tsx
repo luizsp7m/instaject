@@ -1,14 +1,12 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react"
 import { Layout } from "../../components/Layout";
-import { BackButton } from "../../components/BackButton";
 import { ProjectForm } from "../../components/Form/ProjectForm";
 
 export default function Create() {
   return (
-    <Layout title="Cadastrar projeto">
-      <BackButton destination="/projects" />
-      <ProjectForm /> { /* Create */}
+    <Layout title="Publicar projeto">
+      <ProjectForm />
     </Layout>
   );
 }

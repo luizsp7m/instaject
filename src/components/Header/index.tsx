@@ -1,24 +1,25 @@
-import { Button } from "./Button";
-import { CurrentUser } from "./CurrentUser";
 import { useSession } from "next-auth/react";
+import { CurrentUser } from "./CurrentUser";
+import { Menu } from "./Menu";
+import { SignInButton } from "./SignInButton";
 
-interface Props {
-  onToggleSidebar: () => void;
-}
-
-export function Header({ onToggleSidebar }: Props) {
+export function Header() {
   const { data: session } = useSession();
 
   return (
-    <header className="h-16 bg-gray-900 flex items-center justify-between px-4 border-b-[0.05rem] border-b-gray-800">
-      <Button onToggleSidebar={onToggleSidebar} />
+    <header className="bg-grayish-900 border-b-[0.05rem] border-b-gray-800 fixed w-full">
+      <div className="flex items-center justify-between max-w-[1086px] w-full mx-auto h-[5rem] px-8 relative">
+        <h1 className="font-medium">Instaject</h1>
 
-      {session && (
-        <CurrentUser
-          username={session.user?.name || ""}
-          image={session.user?.image || ""}
-        />
-      )}
+        <Menu />
+
+        {session ? (
+          <CurrentUser
+            username={session.user?.name || ""}
+            image={session.user?.image || ""}
+          />
+        ) : <SignInButton />}
+      </div>
     </header>
   );
 }

@@ -5,17 +5,19 @@ module.exports = {
   ],
   theme: {
     extend: {
-      gridTemplateColumns: {
-        'technologies-auto': 'repeat(auto-fill, minmax(170px, 1fr))',
-        'projects-auto': 'repeat(auto-fill, minmax(320px, 1fr))',
-      },
-
       colors: {
-        "modal": "rgba(0, 0, 0, 0.40)"
+        "grayish": {
+          700: "#243447",
+          900: "#141D26",
+        }
       },
 
       fontFamily: {
         "poppins": ["Poppins", "sans-serif"]
+      },
+
+      gridTemplateColumns: {
+        "feed-layout": "repeat(auto-fill, minmax(330px, 1fr))",
       },
 
       keyframes: {
