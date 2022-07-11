@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body {
-  @apply bg-grayish-900 text-slate-200 font-poppins
+  @apply bg-grayish-900 text-slate-200 font-poppins scrollbar-thumb-zinc-700 scrollbar-track-transparent scrollbar-thin
 }

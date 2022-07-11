@@ -1,4 +1,5 @@
 import { onValue, ref } from "firebase/database";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Layout } from "../components/Layout";
 import { Loading } from "../components/Loading";
@@ -6,9 +7,11 @@ import { ProjectList } from "../components/ProjectList";
 import { database } from "../lib/firebase";
 import { Project } from "../types";
 
-export default function Home() {
+export default function Favorites() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsIsLoading, setProjectsIsLoading] = useState<boolean>(true);
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     setProjectsIsLoading(true);
@@ -46,13 +49,23 @@ export default function Home() {
           }
         });
 
-        setProjects(projects);
+        let projectsFavorites: Project[] = [];
+
+        projects.map(project => {
+          return project.favorites.map(favorite => {
+            if (favorite.user.email === session?.user?.email) {
+              projectsFavorites.push(project);
+            }
+          });
+        });
+
+        setProjects(projectsFavorites);
         setProjectsIsLoading(false);
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [session]);
 
   return (
     <Layout title="Início">

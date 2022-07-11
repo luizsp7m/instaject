@@ -20,7 +20,7 @@ export function Menu() {
         </a>
       </Link>
 
-      <Link href="/projects/create" passHref>
+      <Link href="/favorites" passHref>
         <a className="h-10 w-10 flex justify-center items-center rounded-full hover:text-gray-200">
           <AiFillHeart size={18} />
         </a>

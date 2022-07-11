@@ -1,15 +1,22 @@
+import Link from "next/link";
+
 interface Props {
   image: string;
+  projectId: string;
 }
 
-export function ProjectImage({ image }: Props) {
+export function ProjectImage({ image, projectId }: Props) {
   return (
-    <div>
-      <img
-        src={image}
-        alt=""
-        className="w-full h-[186px] object-cover"
-      />
+    <div className="overflow-hidden">
+      <Link href={`/projects/${projectId}`}>
+        <a className="">
+          <img
+            src={image}
+            alt=""
+            className="w-full h-[186px] object-cover hover:scale-105 transition-transform"
+          />
+        </a>
+      </Link>
     </div>
   );
 }

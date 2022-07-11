@@ -22,6 +22,7 @@ export function ProjectCard({ project }: Props) {
 
       <ProjectImage
         image={project.image}
+        projectId={project.id}
       />
 
       <ProjectBody
@@ -30,6 +31,7 @@ export function ProjectCard({ project }: Props) {
         description={project.description}
         repository={project.repository}
         favorites={project.favorites}
+        comments={project.comments}
       />
 
       {session?.user?.email === project.user.email && (

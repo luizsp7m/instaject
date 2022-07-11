@@ -1,45 +1,78 @@
 import { onValue, ref } from "firebase/database";
-import { GetServerSideProps } from "next"
-import { getSession } from "next-auth/react";
-import { ProjectForm } from "../../components/Form/ProjectForm";
+import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 import { Layout } from "../../components/Layout";
 import { database } from "../../lib/firebase";
 import { Project } from "../../types";
+import { ProjectPost as ProjectPostComponent } from "../../components/ProjectPost";
+import { Loading } from "../../components/Loading";
 
 interface Props {
-  project: Project;
+  projectId: string;
 }
 
-export default function Update({ project }: Props) {
+export default function ProjectPost({ projectId }: Props) {
+  const [project, setProject] = useState<Project>();
+  const [projectIsLoading, setProjectIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setProjectIsLoading(true);
+
+    const projectRef = ref(database, `projects/${projectId}`);
+
+    const unsubscribe = onValue(projectRef, snapshot => {
+      const data = snapshot.val();
+
+      setProject({
+        id: projectId,
+        name: data.name,
+        description: data.description,
+        repository: data.repository,
+        deploy: data.deploy,
+        image: data.image,
+        created_at: data.created_at,
+        user: data.user,
+        favorites: Object.entries<any>(data.favorites ?? {}).map(([key, data]) => {
+          return {
+            id: key,
+            user: data.user,
+          }
+        }),
+
+        comments: Object.entries<any>(data.comments ?? {}).map(([key, value]) => {
+          return {
+            id: key,
+            user: value.user,
+            created_at: value.created_at,
+            comment: value.comment,
+          }
+        }),
+      });
+
+      setProjectIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <Layout title="Projetos">
-      <ProjectForm project={project} />
+    <Layout title={project?.name ?? "Carregando..."}>
+      {projectIsLoading && <Loading />}
+      {!projectIsLoading && project && <ProjectPostComponent project={project} />}
     </Layout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    }
-  }
-
   const projectRef = ref(database, `projects/${context.params?.id}`);
 
-  let project = undefined;
+  let project = false;
 
   onValue(projectRef, snapshot => {
     const data = snapshot.val();
-    
-    project = {
-      id: context.params?.id,
-      ...data,
+
+    if (data) {
+      project = true;
     }
   });
 
@@ -54,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      project,
+      projectId: context.params?.id,
     },
   }
 }

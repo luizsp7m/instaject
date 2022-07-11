@@ -6,11 +6,7 @@ interface Props {
   email: string;
 }
 
-export function ProjectHeader({
-  image,
-  username,
-  email
-}: Props) {
+export function ProjectHeader({ image, username, email }: Props) {
   return (
     <div className="flex gap-4 items-center p-3">
       <img

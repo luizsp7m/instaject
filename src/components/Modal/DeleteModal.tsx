@@ -5,7 +5,7 @@ interface Props {
 
 export function DeleteModal({ onRemove, closeModal }: Props) {
   return (
-    <div className="fixed bg-[rgba(0,0,0,0.50)] top-0 bottom-0 left-0 right-0 flex justify-center items-start">
+    <div className="z-10 fixed bg-[rgba(0,0,0,0.50)] top-0 bottom-0 left-0 right-0 flex justify-center items-start">
       <div className="max-w-sm w-full bg-gray-700 rounded mt-8 p-8 flex flex-col items-center gap-4 text-sm animate-fadeIn">
         <h1 className="font-medium">Remover registro?</h1>
         <p className="font-normal text-center">Você realmente quer apagar esse registro? Essa ação não poderá ser desfeita</p>

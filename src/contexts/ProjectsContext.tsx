@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { createContext, ReactNode, useEffect } from "react";
+import { createContext, ReactNode } from "react";
 import { ProjectInputs } from "../components/Form/ProjectForm";
 import { database } from "../lib/firebase";
 import { push, ref, remove, set, update } from "firebase/database";
@@ -10,6 +10,7 @@ interface ProjectsContextData {
   removeProject: (projectId: string) => Promise<void>;
   addProjectToFavorites: (projectId: string) => Promise<void>;
   removeProjectFromFavorites: (projectId: string, favoriteId: string) => Promise<void>;
+  createComment: (projectId: string, comment: string) => Promise<void>;
 }
 
 interface ProjectsProviderProps {
@@ -56,6 +57,16 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     remove(favoriteRef);
   }
 
+  async function createComment(projectId: string, comment: string) {
+    const projectRef = ref(database, `projects/${projectId}/comments`);
+    const newProjectComment = push(projectRef);
+    set(newProjectComment, {
+      comment,
+      user: session?.user,
+      created_at: new Date().toISOString(),
+    });
+  }
+
   return (
     <ProjectsContext.Provider value={{
       createProject,
@@ -63,6 +74,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
       removeProject,
       addProjectToFavorites,
       removeProjectFromFavorites,
+      createComment,
     }}>
       {children}
     </ProjectsContext.Provider>

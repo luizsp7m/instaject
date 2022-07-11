@@ -21,7 +21,7 @@ export default function List({ email }: Props) {
 
     const projectListRef = ref(database, "projects");
 
-    onValue(projectListRef, snapshot => {
+    const unsubscribe = onValue(projectListRef, snapshot => {
       const data = snapshot.val();
 
       if (data) {
@@ -35,14 +35,29 @@ export default function List({ email }: Props) {
             image: value.image,
             created_at: value.created_at,
             user: value.user,
+            favorites: Object.entries<any>(value.favorites ?? {}).map(([key, value]) => {
+              return {
+                id: key,
+                user: value.user,
+              }
+            }),
+            comments: Object.entries<any>(value.comments ?? {}).map(([key, value]) => {
+              return {
+                id: key,
+                user: value.user,
+                created_at: value.created_at,
+                comment: value.comment,
+              }
+            }),
           }
         });
 
-        setProjects(projects);
+        setProjects(projects.filter(project => project.user.email === email));
+        setProjectsIsLoading(false);
       }
     });
 
-    setProjectsIsLoading(false);
+    return () => unsubscribe();
   }, []);
 
   return (

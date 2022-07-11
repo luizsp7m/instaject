@@ -3,14 +3,15 @@ import { useEffect } from "react";
 import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useProjects } from "../../hooks/useProjects";
-import { Favorite } from "../../types";
+import { Comment, Favorite } from "../../types";
 
 interface Props {
   projectId: string;
   favorites?: Array<Favorite>;
+  comments?: Array<Comment>;
 }
 
-export function InteractionButtons({ projectId, favorites }: Props) {
+export function InteractionButtons({ projectId, favorites, comments }: Props) {
   const { addProjectToFavorites, removeProjectFromFavorites } = useProjects();
 
   const { data: session } = useSession();
@@ -30,7 +31,6 @@ export function InteractionButtons({ projectId, favorites }: Props) {
 
   function userIsInFavorites() {
     const exists = favorites?.find(favorite => favorite.user.email === session?.user?.email);
-    console.log(exists);
 
     return exists ? true : false;
   }
@@ -51,7 +51,7 @@ export function InteractionButtons({ projectId, favorites }: Props) {
         className="flex items-center gap-2"
       >
         <AiOutlineComment size={20} />
-        <span className="text-sm">2</span>
+        <span className="text-sm">{comments?.length}</span>
       </button>
     </div>
   );
