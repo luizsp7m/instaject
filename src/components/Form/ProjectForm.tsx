@@ -91,7 +91,7 @@ export function ProjectForm({ project }: Props) {
       setImageUrl("");
       toast.success("Projeto criado");
     }).catch(error => {
-      toast.success("Houve um erro");
+      toast.error("Houve um erro");
     });
   };
 

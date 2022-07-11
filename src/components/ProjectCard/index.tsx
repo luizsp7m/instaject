@@ -29,6 +29,7 @@ export function ProjectCard({ project }: Props) {
         name={project.name}
         description={project.description}
         repository={project.repository}
+        favorites={project.favorites}
       />
 
       {session?.user?.email === project.user.email && (

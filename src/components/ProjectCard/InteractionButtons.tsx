@@ -1,15 +1,38 @@
-import { AiOutlineHeart, AiFillHeart, AiOutlineComment, AiFillSetting } from "react-icons/ai";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
+import { toast } from "react-toastify";
 import { useProjects } from "../../hooks/useProjects";
+import { Favorite } from "../../types";
 
 interface Props {
   projectId: string;
+  favorites?: Array<Favorite>;
 }
 
-export function InteractionButtons({ projectId }: Props) {
-  const { addProjectToFavorite } = useProjects();
+export function InteractionButtons({ projectId, favorites }: Props) {
+  const { addProjectToFavorites, removeProjectFromFavorites } = useProjects();
+
+  const { data: session } = useSession();
 
   function handleAddProjectToFavorite() {
-    addProjectToFavorite(projectId);
+    if (!session) return toast.error("Usuário não autenticado");
+
+    addProjectToFavorites(projectId);
+  }
+
+  function handleRemoveProjectFromFavorite() {
+    if (!session) return toast.error("Usuário não autenticado");
+
+    const favorite = favorites?.find(favorite => favorite.user.email === session?.user?.email) as Favorite;
+    removeProjectFromFavorites(projectId, favorite.id);
+  }
+
+  function userIsInFavorites() {
+    const exists = favorites?.find(favorite => favorite.user.email === session?.user?.email);
+    console.log(exists);
+
+    return exists ? true : false;
   }
 
   return (
@@ -17,10 +40,10 @@ export function InteractionButtons({ projectId }: Props) {
       <button
         type="button"
         className="flex items-center gap-2"
-        onClick={handleAddProjectToFavorite}
+        onClick={userIsInFavorites() ? handleRemoveProjectFromFavorite : handleAddProjectToFavorite}
       >
-        <AiOutlineHeart size={20} />
-        <span className="text-sm">6</span>
+        {userIsInFavorites() ? <AiFillHeart size={20} className="text-red-500" /> : <AiOutlineHeart size={20} />}
+        <span className="text-sm">{favorites?.length}</span>
       </button>
 
       <button

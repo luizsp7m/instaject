@@ -10,22 +10,27 @@ export type User = {
   image: string;
 }
 
-export type Comment = {
-  id: string;
-  user: User;
-  comment: string;
-}
-
 export type Project = {
   id: string;
-  user: User;
   name: string;
   description: string;
   repository: string;
   deploy: string;
   image: string;
   created_at: string;
-  last_update: string;
+  user: User;
+  favorites?: Array<Favorite>;
   comments?: Array<Comment>;
-  favorites?: Array<User>;
+}
+
+export type Comment = {
+  id: string;
+  user: User;
+  comment: string;
+  created_at: string;
+}
+
+export type Favorite = {
+  id: string;
+  user: User;
 }

@@ -1,16 +1,15 @@
-import { format } from "date-fns";
-import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useEffect } from "react";
 import { ProjectInputs } from "../components/Form/ProjectForm";
 import { database } from "../lib/firebase";
-import { Project } from "../types";
+import { push, ref, remove, set, update } from "firebase/database";
 
 interface ProjectsContextData {
   createProject: (data: ProjectInputs) => Promise<void>;
   updateProject: (data: ProjectInputs, projectId: string) => Promise<void>;
   removeProject: (projectId: string) => Promise<void>;
-  addProjectToFavorite: (projectId: string) => Promise<void>;
+  addProjectToFavorites: (projectId: string) => Promise<void>;
+  removeProjectFromFavorites: (projectId: string, favoriteId: string) => Promise<void>;
 }
 
 interface ProjectsProviderProps {
@@ -23,29 +22,38 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   const { data: session } = useSession();
 
   async function createProject(data: ProjectInputs) {
-    await addDoc(collection(database, "projects"), {
+    const projectListRef = ref(database, "projects");
+    const newProjectRef = push(projectListRef);
+    set(newProjectRef, {
       ...data,
       user: session?.user,
       created_at: new Date().toISOString(),
-      last_update: new Date().toISOString(),
     });
   }
 
   async function updateProject(data: ProjectInputs, projectId: string) {
-    await updateDoc(doc(database, "projects", projectId), {
+    const projectRef = ref(database, `projects/${projectId}`);
+    update(projectRef, {
       ...data,
-      last_update: new Date().toISOString(),
     });
   }
 
   async function removeProject(projectId: string) {
-    await deleteDoc(doc(database, "projects", projectId));
+    const projectRef = ref(database, `projects/${projectId}`);
+    remove(projectRef);
   }
 
-  async function addProjectToFavorite(projectId: string) {
-    await updateDoc(doc(database, "projects", projectId), {
-      favorites: session?.user,
+  async function addProjectToFavorites(projectId: string) {
+    const projectRef = ref(database, `projects/${projectId}/favorites`);
+    const newProjectFavorite = push(projectRef);
+    set(newProjectFavorite, {
+      user: session?.user,
     });
+  }
+
+  async function removeProjectFromFavorites(projectId: string, favoriteId: string) {
+    const favoriteRef = ref(database, `projects/${projectId}/favorites/${favoriteId}`);
+    remove(favoriteRef);
   }
 
   return (
@@ -53,7 +61,8 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
       createProject,
       updateProject,
       removeProject,
-      addProjectToFavorite,
+      addProjectToFavorites,
+      removeProjectFromFavorites,
     }}>
       {children}
     </ProjectsContext.Provider>

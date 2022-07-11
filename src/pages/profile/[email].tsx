@@ -1,5 +1,4 @@
-import { format } from "date-fns";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { onValue, ref } from "firebase/database";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import { BackButton } from "../../components/BackButton";
@@ -17,38 +16,33 @@ export default function List({ email }: Props) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsIsLoading, setProjectsIsLoading] = useState<boolean>(true);
 
-  async function getProjectsByEmail() {
+  useEffect(() => {
     setProjectsIsLoading(true);
 
-    const q = query(
-      collection(database, "projects"),
-      where("user.email", "==", email),
-    );
+    const projectListRef = ref(database, "projects");
 
-    const querySnapshot = await getDocs(q);
+    onValue(projectListRef, snapshot => {
+      const data = snapshot.val();
 
-    const arrayDocs: Array<Project> = [];
+      if (data) {
+        const projects = Object.entries<any>(data).map(([key, value]) => {
+          return {
+            id: key,
+            name: value.name,
+            description: value.description,
+            repository: value.repository,
+            deploy: value.deploy,
+            image: value.image,
+            created_at: value.created_at,
+            user: value.user,
+          }
+        });
 
-    querySnapshot.forEach(doc => {
-      arrayDocs.push({
-        id: doc.id,
-        user: doc.data().user,
-        name: doc.data().name,
-        description: doc.data().description,
-        repository: doc.data().repository,
-        deploy: doc.data().deploy,
-        image: doc.data().image,
-        created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
-        last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
-      });
+        setProjects(projects);
+      }
     });
 
-    setProjects(arrayDocs);
     setProjectsIsLoading(false);
-  }
-
-  useEffect(() => {
-    getProjectsByEmail();
   }, []);
 
   return (

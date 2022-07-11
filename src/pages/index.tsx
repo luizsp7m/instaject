@@ -1,9 +1,7 @@
-import { format } from "date-fns";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { Layout } from "../components/Layout";
 import { Loading } from "../components/Loading";
-import { ProjectCard } from "../components/ProjectCard";
 import { ProjectList } from "../components/ProjectList";
 import { database } from "../lib/firebase";
 import { Project } from "../types";
@@ -12,38 +10,47 @@ export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsIsLoading, setProjectsIsLoading] = useState<boolean>(true);
 
-  async function getProjects() {
+  useEffect(() => {
     setProjectsIsLoading(true);
 
-    const arrayDocs: Array<Project> = [];
+    const projectListRef = ref(database, "projects");
 
-    const q = query(
-      collection(database, "projects"),
-      orderBy("created_at", "desc")
-    );
+    onValue(projectListRef, snapshot => {
+      const data = snapshot.val();
 
-    const querySnapshot = await getDocs(q);
+      if (data) {
+        const projects = Object.entries<any>(data).map(([key, value]) => {
+          return {
+            id: key,
+            name: value.name,
+            description: value.description,
+            repository: value.repository,
+            deploy: value.deploy,
+            image: value.image,
+            created_at: value.created_at,
+            user: value.user,
+            favorites: Object.entries<any>(value.favorites ?? {}).map(([key, value]) => {
+              return {
+                id: key,
+                user: value.user,
+              }
+            }),
+            comments: Object.entries<any>(value.comments ?? {}).map(([key, value]) => {
+              return {
+                id: key,
+                user: value.user,
+                created_at: value.created_at,
+                comment: value.comment,
+              }
+            }),
+          }
+        });
 
-    querySnapshot.forEach((doc) => {
-      arrayDocs.push({
-        id: doc.id,
-        user: doc.data().user,
-        name: doc.data().name,
-        description: doc.data().description,
-        repository: doc.data().repository,
-        deploy: doc.data().deploy,
-        image: doc.data().image,
-        created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
-        last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
-      });
+        setProjects(projects);
+      }
     });
 
-    setProjects(arrayDocs);
     setProjectsIsLoading(false);
-  }
-
-  useEffect(() => {
-    getProjects();
   }, []);
 
   return (

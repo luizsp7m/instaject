@@ -1,5 +1,4 @@
-import { format } from "date-fns";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { onValue, ref } from "firebase/database";
 import { GetServerSideProps } from "next"
 import { getSession } from "next-auth/react";
 import { ProjectForm } from "../../components/Form/ProjectForm";
@@ -31,28 +30,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  const q = query(
-    collection(database, "projects"),
-    where("user.email", "==", session.user?.email),
-  );
+  const projectRef = ref(database, `projects/${context.params?.id}`);
 
-  const querySnapshot = await getDocs(q);
-  const projects: Array<Project> = [];
-  querySnapshot.forEach(doc => {
-    projects.push({
-      id: doc.id,
-      user: doc.data().user,
-      name: doc.data().name,
-      description: doc.data().description,
-      repository: doc.data().repository,
-      deploy: doc.data().deploy,
-      image: doc.data().image,
-      created_at: format(new Date(doc.data().created_at), "dd/MM/yyyy - HH:mm"),
-      last_update: format(new Date(doc.data().last_update), "dd/MM/yyyy - HH:mm"),
-    });
+  let project = undefined;
+
+  onValue(projectRef, snapshot => {
+    const data = snapshot.val();
+    
+    project = {
+      id: context.params?.id,
+      ...data,
+    }
   });
-
-  const project = projects.find(project => project.id === context.params?.id);
 
   if (!project) {
     return {

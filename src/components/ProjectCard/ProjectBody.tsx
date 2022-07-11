@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { HiArrowRight } from "react-icons/hi";
+import { Favorite } from "../../types";
 import { InteractionButtons } from "./InteractionButtons";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
   name: string;
   description: string;
   repository: string;
+  favorites?: Array<Favorite>;
 }
 
 export function ProjectBody({
@@ -15,10 +17,14 @@ export function ProjectBody({
   name,
   description,
   repository,
+  favorites,
 }: Props) {
   return (
     <div className="flex flex-col items-start gap-3 p-3">
-      <InteractionButtons projectId={id} />
+      <InteractionButtons
+        projectId={id}
+        favorites={favorites}
+      />
 
       <h1 className="text-md font-bold tracking-wide">
         {name}
