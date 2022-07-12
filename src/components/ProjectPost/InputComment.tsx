@@ -1,8 +1,9 @@
 import { useSession } from "next-auth/react";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
-import { useProjects } from "../../hooks/useProjects";
 import { AiOutlineSend } from "react-icons/ai";
+import { addDoc, collection } from "firebase/firestore";
+import { database } from "../../lib/firebase";
 
 interface Props {
   projectId: string;
@@ -11,20 +12,26 @@ interface Props {
 export function InputComment({ projectId }: Props) {
   const { data: session } = useSession();
 
-  const { createComment } = useProjects();
-
   const [commentInput, setCommentInput] = useState<string>("");
 
   function handleCreateComment(event: FormEvent) {
     event.preventDefault();
 
-    if (!session) return toast.error("Usuário não autenticado");
+    if (!session) return toast.warning("Usuário não autenticado");
 
     if (commentInput.trim() === "") return;
 
-    createComment(projectId, commentInput);
+    const docRef = collection(database, "projects", `${projectId}`, "comments");
 
-    setCommentInput("");
+    addDoc(docRef, {
+      comment: commentInput,
+      user: session?.user,
+      created_at: new Date().toISOString(),
+    }).then(() => {
+      setCommentInput("");
+    }).catch(error => {
+      toast.error("Houve um erro");
+    });
   }
 
   return (

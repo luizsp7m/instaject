@@ -3,13 +3,14 @@ import { Comment } from "./Comment";
 
 interface Props {
   comments?: Array<CommentType>;
+  projectId: string;
 }
 
-export function Comments({ comments }: Props) {
+export function Comments({ comments, projectId }: Props) {
   return (
-    <div className="h-[470px] overflow-y-auto p-4 flex flex-col gap-4 scrollbar-thumb-zinc-700 scrollbar-track-transparent scrollbar-thin">
+    <div className="flex flex-col gap-4">
       {comments?.map(comment => (
-        <Comment key={comment.id} comment={comment} />
+        <Comment key={comment.id} comment={comment} projectId={projectId} />
       ))}
     </div>
   );

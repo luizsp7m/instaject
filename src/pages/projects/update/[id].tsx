@@ -1,4 +1,4 @@
-import { onValue, ref } from "firebase/database";
+import { doc, getDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next"
 import { getSession } from "next-auth/react";
 import { ProjectForm } from "../../../components/Form/ProjectForm";
@@ -30,28 +30,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  const projectRef = ref(database, `projects/${context.params?.id}`);
+  const docRef = doc(database, "projects", `${context.params?.id}`);
+  
+  const docSnap = await getDoc(docRef);
 
-  let project = undefined;
-
-  onValue(projectRef, snapshot => {
-    const data = snapshot.val();
-
-    project = {
-      id: context.params?.id,
-      name: data.name,
-      description: data.description,
-      repository: data.repository,
-      deploy: data.deploy,
-      image: data.image,
-      created_at: data.created_at,
-      user: data.user,
-    }
-  }, {
-    onlyOnce: true,
-  });
-
-  if (!project) {
+  if (!docSnap.exists()) {
     return {
       redirect: {
         destination: "/",
@@ -62,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      project,
+      project: { id: docSnap.id, ...docSnap.data() }
     },
   }
 }

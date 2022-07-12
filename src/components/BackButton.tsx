@@ -1,20 +1,18 @@
-import Link from "next/link";
-
+import { useRouter } from "next/router";
 import { BiArrowBack } from "react-icons/bi";
 
-interface Props {
-  destination: string;
-}
+export function BackButton() {
+  const router = useRouter();
 
-export function BackButton({ destination }: Props) {
   return (
     <div className="flex">
-      <Link href={destination} passHref>
-        <a className="flex items-center gap-2 text-sm text-gray-400 hover:underline">
-          <BiArrowBack />
-          <span>Voltar</span>
-        </a>
-      </Link>
+      <button
+        className="flex items-center gap-2 text-sm text-gray-400 hover:underline"
+        onClick={() => router.back()}
+      >
+        <BiArrowBack />
+        <span>Voltar</span>
+      </button>
     </div>
   );
 }

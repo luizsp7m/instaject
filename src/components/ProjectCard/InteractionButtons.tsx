@@ -1,38 +1,38 @@
+import { addDoc, collection, deleteDoc, doc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { useProjects } from "../../hooks/useProjects";
+import { database } from "../../lib/firebase";
 import { Comment, Favorite } from "../../types";
 
 interface Props {
   projectId: string;
-  favorites?: Array<Favorite>;
-  comments?: Array<Comment>;
+  favorites: Array<Favorite>;
+  comments: Array<Comment>;
 }
 
 export function InteractionButtons({ projectId, favorites, comments }: Props) {
-  const { addProjectToFavorites, removeProjectFromFavorites } = useProjects();
-
   const { data: session } = useSession();
 
-  function handleAddProjectToFavorite() {
-    if (!session) return toast.error("Usuário não autenticado");
+  const exists = favorites.find(favorite => favorite.user.email === session?.user?.email);
 
-    addProjectToFavorites(projectId);
+  function handleAddProjectToFavorite() {
+    if (!session) return toast.warning("Usuário não autenticado");
+
+    const docRef = collection(database, "projects", `${projectId}`, "favorites");
+    addDoc(docRef, {
+      user: session?.user,
+      created_at: new Date().toISOString(),
+    });
   }
 
   function handleRemoveProjectFromFavorite() {
-    if (!session) return toast.error("Usuário não autenticado");
+    if (!session) return toast.warning("Usuário não autenticado");
 
-    const favorite = favorites?.find(favorite => favorite.user.email === session?.user?.email) as Favorite;
-    removeProjectFromFavorites(projectId, favorite.id);
-  }
-
-  function userIsInFavorites() {
-    const exists = favorites?.find(favorite => favorite.user.email === session?.user?.email);
-
-    return exists ? true : false;
+    const docRef = doc(database, "projects", `${projectId}`, "favorites", `${exists?.id}`);
+    deleteDoc(docRef).catch(error => {
+      toast.error("Houve um erro");
+    });;
   }
 
   return (
@@ -40,9 +40,9 @@ export function InteractionButtons({ projectId, favorites, comments }: Props) {
       <button
         type="button"
         className="flex items-center gap-2"
-        onClick={userIsInFavorites() ? handleRemoveProjectFromFavorite : handleAddProjectToFavorite}
+        onClick={exists ? handleRemoveProjectFromFavorite : handleAddProjectToFavorite}
       >
-        {userIsInFavorites() ? <AiFillHeart size={20} className="text-red-500" /> : <AiOutlineHeart size={20} />}
+        {exists ? <AiFillHeart size={20} className="text-red-500" /> : <AiOutlineHeart size={20} />}
         <span className="text-sm">{favorites?.length}</span>
       </button>
 

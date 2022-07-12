@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useProjects } from "../../hooks/useProjects";
 import { ImageLocal, Project } from "../../types";
 import { DeleteButton } from "./DeleteButton";
 import { FileInput } from "../Input/FileInput";
@@ -9,6 +7,11 @@ import { TextInput } from "../Input/TextInput";
 import { SubmitButton } from "./SubmitButton";
 import { useRouter } from "next/router";
 import { BackButton } from "../BackButton";
+import { addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { projectCollectionRef } from "../../lib/firestore.collection";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { database } from "../../lib/firebase";
 
 interface Props {
   project?: Project;
@@ -57,9 +60,9 @@ const validations = {
 }
 
 export function ProjectForm({ project }: Props) {
-  const { createProject, updateProject, removeProject } = useProjects();
-
   const Router = useRouter();
+
+  const { data: session } = useSession();
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<ProjectInputs>({
     defaultValues: {
@@ -81,7 +84,11 @@ export function ProjectForm({ project }: Props) {
   }
 
   function handleCreateProject(data: ProjectInputs) {
-    createProject(data).then(() => {
+    addDoc(projectCollectionRef, {
+      ...data,
+      user: session?.user,
+      created_at: new Date().toISOString(),
+    }).then(response => {
       setValue("name", "");
       setValue("description", "");
       setValue("repository", "");
@@ -96,19 +103,23 @@ export function ProjectForm({ project }: Props) {
   };
 
   function handleUpdateProject(data: ProjectInputs, projectId: string) {
-    updateProject(data, projectId).then(() => {
-      toast.success("Dados salvos");
+    const docRef = doc(database, "projects", projectId);
+    updateDoc(docRef, {
+      ...data,
+    }).then(() => {
+      toast.success("Projeto atualizado");
     }).catch(error => {
       toast.error("Houve um erro");
     });
   }
 
   function handleRemoveProject(projectId: string) {
-    removeProject(projectId).then(() => {
+    const docRef = doc(database, "projects", projectId);
+    deleteDoc(docRef).then(() => {
       Router.push("/");
     }).catch(error => {
       toast.error("Houve um erro");
-    })
+    });
   }
 
   useEffect(() => {
@@ -121,7 +132,7 @@ export function ProjectForm({ project }: Props) {
 
   return (
     <div className="max-w-lg w-full mx-auto flex flex-col gap-6 text-md font-medium">
-      <BackButton destination="/" />
+      <BackButton />
 
       <h1>Formulário</h1>
 

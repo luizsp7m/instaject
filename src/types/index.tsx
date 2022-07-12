@@ -19,8 +19,6 @@ export type Project = {
   image: string;
   created_at: string;
   user: User;
-  favorites?: Array<Favorite>;
-  comments?: Array<Comment>;
 }
 
 export type Comment = {
@@ -33,4 +31,5 @@ export type Comment = {
 export type Favorite = {
   id: string;
   user: User;
+  created_at: string;
 }

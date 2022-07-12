@@ -9,8 +9,8 @@ interface Props {
   name: string;
   description: string;
   repository: string;
-  favorites?: Array<Favorite>;
-  comments?: Array<Comment>;
+  favorites: Array<Favorite>;
+  comments: Array<Comment>;
 }
 
 export function ProjectBody({ id, name, description, repository, favorites, comments }: Props) {

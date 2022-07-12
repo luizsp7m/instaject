@@ -1,55 +1,28 @@
-import { onValue, ref } from "firebase/database";
 import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
 import { Layout } from "../../components/Layout";
-import { database } from "../../lib/firebase";
 import { Project } from "../../types";
 import { ProjectPost as ProjectPostComponent } from "../../components/ProjectPost";
+import { useEffect, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { database } from "../../lib/firebase";
+import { useRouter } from "next/router";
 import { Loading } from "../../components/Loading";
 
-interface Props {
-  projectId: string;
-}
 
-export default function ProjectPost({ projectId }: Props) {
+export default function ProjectPost() {
   const [project, setProject] = useState<Project>();
-  const [projectIsLoading, setProjectIsLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const { query: params } = useRouter();
 
   useEffect(() => {
-    setProjectIsLoading(true);
+    setLoading(true);
 
-    const projectRef = ref(database, `projects/${projectId}`);
+    const docRef = doc(database, "projects", `${params.id}`);
 
-    const unsubscribe = onValue(projectRef, snapshot => {
-      const data = snapshot.val();
-
-      setProject({
-        id: projectId,
-        name: data.name,
-        description: data.description,
-        repository: data.repository,
-        deploy: data.deploy,
-        image: data.image,
-        created_at: data.created_at,
-        user: data.user,
-        favorites: Object.entries<any>(data.favorites ?? {}).map(([key, data]) => {
-          return {
-            id: key,
-            user: data.user,
-          }
-        }),
-
-        comments: Object.entries<any>(data.comments ?? {}).map(([key, value]) => {
-          return {
-            id: key,
-            user: value.user,
-            created_at: value.created_at,
-            comment: value.comment,
-          }
-        }),
-      });
-
-      setProjectIsLoading(false);
+    const unsubscribe = onSnapshot(docRef, snapshot => {
+      setProject({ id: snapshot.id, ...snapshot.data() } as Project);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -57,37 +30,16 @@ export default function ProjectPost({ projectId }: Props) {
 
   return (
     <Layout title={project?.name ?? "Carregando..."}>
-      {projectIsLoading && <Loading />}
-      {!projectIsLoading && project && <ProjectPostComponent project={project} />}
+      {loading ? <Loading /> : (
+        project && <ProjectPostComponent project={project} />
+      )}
     </Layout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const projectRef = ref(database, `projects/${context.params?.id}`);
-
-  let project = false;
-
-  onValue(projectRef, snapshot => {
-    const data = snapshot.val();
-
-    if (data) {
-      project = true;
-    }
-  });
-
-  if (!project) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    }
-  }
-
   return {
     props: {
-      projectId: context.params?.id,
     },
   }
 }
