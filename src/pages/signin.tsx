@@ -23,7 +23,7 @@ export default function SignIn({ providers }: Props) {
             <p className="text-md text-gray-400">Entre com a sua conta para acessar nossa plataforma</p>
           </div>
 
-          <div className="flex flex-col gap-3">
+          {/* <div className="flex flex-col gap-3">
             {Object.values(providers).map((provider) => (
               <button
                 key={provider.name}
@@ -37,7 +37,7 @@ export default function SignIn({ providers }: Props) {
                 </span>
               </button>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
