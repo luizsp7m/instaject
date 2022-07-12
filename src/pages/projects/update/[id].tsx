@@ -31,10 +31,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const docRef = doc(database, "projects", `${context.params?.id}`);
-  
+
   const docSnap = await getDoc(docRef);
 
   if (!docSnap.exists()) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
+  }
+
+  if (docSnap.data().user.email !== session.user?.email) {
     return {
       redirect: {
         destination: "/",

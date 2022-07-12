@@ -49,14 +49,14 @@ const validations = {
   repository: {
     required: "Campo obrigatório",
     pattern: {
-      value: /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/,
+      value: /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/,
       message: "Digite uma URL válida"
     },
   },
 
   deploy: {
     pattern: {
-      value: /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/,
+      value: /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/,
       message: "Digite uma URL válida"
     },
   },

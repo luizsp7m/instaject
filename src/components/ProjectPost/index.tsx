@@ -101,7 +101,7 @@ export function ProjectPost({ project }: Props) {
                       Repositório
                     </a>
 
-                    {project.repository && (
+                    {project.deploy && (
                       <a
                         href={project.deploy}
                         target="_blank"
