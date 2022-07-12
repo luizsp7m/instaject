@@ -38,7 +38,7 @@ export function InputComment({ projectId }: Props) {
     <form onSubmit={handleCreateComment} className="flex">
       <input
         type="text"
-        className="h-12 flex-1 outline-none bg-gray-600 px-3 text-md text-gray-300"
+        className="h-12 w-full outline-none bg-gray-600 px-3 text-md text-gray-300"
         value={commentInput}
         onChange={({ target }) => setCommentInput(target.value)}
       />

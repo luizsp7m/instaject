@@ -48,10 +48,17 @@ const validations = {
 
   repository: {
     required: "Campo obrigatório",
+    pattern: {
+      value: /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/,
+      message: "Digite uma URL válida"
+    },
   },
 
   deploy: {
-    required: "Campo obrigatório",
+    pattern: {
+      value: /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/,
+      message: "Digite uma URL válida"
+    },
   },
 
   image: {

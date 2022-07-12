@@ -15,7 +15,7 @@ export type Project = {
   name: string;
   description: string;
   repository: string;
-  deploy: string;
+  deploy?: string;
   image: string;
   created_at: string;
   user: User;

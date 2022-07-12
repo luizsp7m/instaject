@@ -1,10 +1,15 @@
 import Head from "next/head";
 
-import { signIn, getSession } from "next-auth/react";
+import { getSession, getProviders, LiteralUnion, ClientSafeProvider, signIn } from "next-auth/react";
 import { AiFillGithub } from "react-icons/ai";
 import { GetServerSideProps } from "next";
+import { BuiltInProviderType } from "next-auth/providers";
 
-export default function App() {
+interface Props {
+  providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null;
+}
+
+export default function SignIn({ providers }: Props) {
   return (
     <div>
       <Head>
@@ -19,10 +24,19 @@ export default function App() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <button type="button" onClick={() => signIn()} className="bg-violet-600 w-full rounded h-14 flex items-center justify-center gap-2 focus:ring-violet-500 hover:bg-violet-500">
-              <AiFillGithub size={22} />
-              <span className="text-sm">Iniciar sessão com GitHub</span>
-            </button>
+            {Object.values(providers).map((provider) => (
+              <button
+                key={provider.name}
+                type="button"
+                onClick={() => signIn(provider.id)}
+                className="bg-sky-500 w-full rounded h-14 flex items-center justify-center gap-2 focus:ring-sky-400 hover:bg-sky-400"
+              >
+                <AiFillGithub size={22} />
+                <span className="text-sm">
+                  Iniciar sessão com {provider.name}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -32,6 +46,8 @@ export default function App() {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
+
+  const providers = await getProviders();
 
   if (session) {
     return {
@@ -43,8 +59,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-
-    },
+    props: { providers },
   }
 }

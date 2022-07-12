@@ -22,7 +22,7 @@ export function ProjectBody({ id, name, description, repository, favorites, comm
         comments={comments}
       />
 
-      <h1 className="text-md font-bold tracking-wide">
+      <h1 className="text-md font-bold tracking-wide truncate w-full">
         {name}
       </h1>
 

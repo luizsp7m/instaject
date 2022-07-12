@@ -25,7 +25,12 @@ export default function Home() {
 
   return (
     <Layout title="Início">
-      {loading ? <Loading /> : <ProjectList projects={projects} />}
+      {loading ? <Loading /> : (
+        <div className="flex flex-col gap-4">
+          <p className="text-md font-medium">Projetos</p>
+          <ProjectList projects={projects} />
+        </div>
+      )}
     </Layout>
   );
 }

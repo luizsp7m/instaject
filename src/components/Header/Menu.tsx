@@ -4,13 +4,17 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { AiOutlinePlus, AiFillHeart, AiFillFolder } from "react-icons/ai";
 
-export function Menu() {
+interface Props {
+  menuToggle: boolean;
+}
+
+export function Menu({ menuToggle }: Props) {
   const { data: session } = useSession();
 
   const { pathname } = useRouter()
 
   return (
-    <div className="flex justify-center items-center gap-12 text-slate-400 absolute inset-x-0 z-10">
+    <div className={`absolute bg-grayish-900 text-slate-400 right-0 top-[81px] h-[calc(100vh-81px)] w-full flex flex-col items-center justify-center gap-14 transition-transform duration-300 ${menuToggle ? "translate-x-0" : "translate-x-full"} md:flex-row md:gap-12 md:inset-x-0 md:top-0 md:h-[80px] md:translate-x-0 md:transition-none`}>
       <Link href="/projects/create" passHref>
         <a className={`flex flex-col gap-2 justify-center items-center rounded-full hover:text-gray-200 font-medium transition-colors ${pathname.includes("create") && "&& text-gray-200"}`}>
           <AiOutlinePlus size={18} />

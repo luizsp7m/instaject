@@ -19,7 +19,7 @@ export function ProjectPublisher({ user }: Props) {
         <h1 className="text-[0.925rem] font-medium">{user.name}</h1>
 
         <Link href={`/profile/${user.email}`}>
-          <a className="text-[0.85rem] text-gray-400 hover:underline">
+          <a className="text-[0.85rem] text-gray-400 hover:underline truncate w-[180px]">
             {user.email}
           </a>
         </Link>

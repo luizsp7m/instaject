@@ -13,7 +13,7 @@ export function ProjectImage({ image, projectId }: Props) {
           <img
             src={image}
             alt=""
-            className="w-full h-[186px] object-cover hover:scale-105 transition-transform"
+            className="w-full h-[220px] md:h-[186px] object-cover hover:scale-105 transition-transform"
           />
         </a>
       </Link>

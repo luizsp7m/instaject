@@ -19,13 +19,15 @@ export function Layout({ title, children }: Props) {
       <Header />
 
       <section className="max-w-[1086px] w-full mx-auto pt-[5rem] min-h-[calc(100vh-4rem)]">
-        <main className="px-8 py-8">
+        <main className="px-3 md:px-8 py-8">
           {children}
         </main>
       </section>
 
       <footer className="flex justify-center items-center h-16 border-t-[0.05rem] border-t-gray-800">
-        ...
+        <p className="text-sm text-slate-400">
+          Desenvolvido por <a href="https://github.com/luizsp7m" target="_blank" className="underline">Luiz Oliveira</a>
+        </p>
       </footer>
 
       <ToastContainer

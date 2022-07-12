@@ -21,42 +21,66 @@ export default function List({ email }: Props) {
   const { query: params } = useRouter();
 
   useEffect(() => {
-    setLoading(true);
+    if (params) {
+      setLoading(true);
 
-    const q = query(projectCollectionRef, where("user.email", "==", `${params.email}`), orderBy("created_at", "desc"));
+      const q = query(projectCollectionRef, where("user.email", "==", `${params.email}`), orderBy("created_at", "desc"));
 
-    const unsubscribe = onSnapshot(q, snapshot => {
-      setProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project)));
-      setLoading(false);
-    });
+      const unsubscribe = onSnapshot(q, snapshot => {
+        setProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project)));
+        setLoading(false);
+      });
 
-    return () => unsubscribe();
-  }, []);
+      return () => unsubscribe();
+    }
+  }, [params]);
 
   return (
     <Layout title="Meus projetos">
       <div className="flex flex-col gap-8">
         <BackButton />
-        {loading ? <Loading /> : <ProjectList projects={projects} />}
+        {loading ? <Loading /> : (
+          projects.length === 0 ? <p className="text-sm font-medium">Nenhum projeto publicado por esse usuário</p> : (
+            <div className="flex flex-col gap-4">
+              <div className="bg-grayish-700 flex justify-center relative rounded-sm p-6">
+                <div className="flex items-center flex-col gap-3">
+                  <img
+                    src={projects[0].user.image}
+                    alt=""
+                    className="h-20 w-20 object-cover rounded-full"
+                  />
+
+                  <div className="flex flex-col gap-1 items-center">
+                    <h1 className="text-md font-medium">{projects[0].user.name}</h1>
+                    <span className="text-sm text-gray-400">{projects[0].user.email}</span>
+                    <h5 className="text-sm font-medium text-gray-300">{projects.length} projeto(s) publicado(s)</h5>
+                  </div>
+                </div>
+              </div>
+
+              <ProjectList projects={projects} />
+            </div>
+          )
+        )}
       </div>
     </Layout>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   const session = await getSession(context);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    }
-  }
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/auth/signin",
+//         permanent: false,
+//       },
+//     }
+//   }
 
-  return {
-    props: {
-    },
-  }
-}
+//   return {
+//     props: {
+//     },
+//   }
+// }
