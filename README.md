@@ -2,7 +2,7 @@
 
 Iniciei esse projeto para por em prática meus conhecimentos em Next.js, TailwindCSS e Firebase, além disso, ao longo de seu desenvolvimento fui acrescentando alguns desafios extras, como upload de imagens, informações em tempo real e validação de formulário.
 
-Como resultado, cheguei em uma aplicação que permite que o usuário faça publicações de seus projetos, veja publicações de outros usuários, faça comentários em publicações, adicione publicações a sua lista de favoritos e faça login na aplicação com uma conta do GitHub.
+Como resultado cheguei em uma aplicação que permite que o usuário faça publicações de seus projetos, veja publicações de outros usuários, faça comentários em publicações, adicione publicações a sua lista de favoritos e faça login na aplicação com uma conta do GitHub.
 
 Veja o resultado clicando <b><a href="https://instaject.vercel.app/" target="_blank">aqui</a></b>
 
